@@ -8,6 +8,18 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { useDesign } from '@/hooks/useDesign';
 
+/* Helper: detect if content is HTML */
+const isHtmlContent = (text) => /<[a-z][\s\S]*>/i.test(text || '');
+
+/* Render content — plain text or HTML */
+const ContentBlock = ({ content, style }) => {
+  if (!content) return null;
+  if (isHtmlContent(content)) {
+    return <div className="prose prose-lg max-w-none leading-relaxed" style={style} dangerouslySetInnerHTML={{ __html: content }} />;
+  }
+  return <div className="prose prose-lg max-w-none leading-relaxed whitespace-pre-wrap" style={style}>{content}</div>;
+};
+
 /* ══════════ CLASSIC LAYOUT ══════════ */
 const ClassicArticle = ({ article, title, content, categoryName, readTime, relatedNews, d, t, language, navigate }) => (
   <div style={{ backgroundColor: d.bg, minHeight: '100vh', paddingTop: '6rem', paddingBottom: '5rem' }}>
@@ -32,7 +44,8 @@ const ClassicArticle = ({ article, title, content, categoryName, readTime, relat
       {article.image_url && (
         <div className="rounded-2xl overflow-hidden shadow-lg mb-10 bg-gray-100"><img src={article.image_url} alt={title} className="w-full h-auto object-cover max-h-[600px]" /></div>
       )}
-      <div className="prose prose-lg max-w-none leading-relaxed mb-16 whitespace-pre-wrap" style={{ color: d.text }}>{content}</div>
+      <ContentBlock content={content} style={{ color: d.text }} />
+      <div className="mb-16" />
       <div className="flex justify-center mb-16">
         <Button variant="outline" onClick={() => navigate('/news')} className="gap-2"><ArrowLeft className="w-4 h-4" /> {t({ en: 'Back to News', ka: '\u10e1\u10d8\u10d0\u10ee\u10da\u10d4\u10d4\u10d1\u10d6\u10d4 \u10d3\u10d0\u10d1\u10e0\u10e3\u10dc\u10d4\u10d1\u10d0' })}</Button>
       </div>
@@ -73,7 +86,8 @@ const WideArticle = ({ article, title, content, categoryName, readTime, relatedN
         <h1 className="text-3xl md:text-5xl font-bold heading-font mb-4 leading-tight" style={{ color: d.heading }}>{title}</h1>
         <div className="flex items-center gap-2 text-sm" style={{ color: d.textMuted }}><Clock className="w-4 h-4" />{readTime} {t({ en: 'min read', ka: '\u10ec\u10d7 \u10e1\u10d0\u10d9\u10d8\u10d7\u10ee\u10d0\u10d5\u10d8' })}</div>
       </div>
-      <div className="prose prose-lg max-w-none leading-relaxed mb-16 whitespace-pre-wrap" style={{ color: d.text }}>{content}</div>
+      <ContentBlock content={content} style={{ color: d.text }} />
+      <div className="mb-16" />
       <div className="flex justify-center mb-16">
         <Button variant="outline" onClick={() => navigate('/news')} className="gap-2"><ArrowLeft className="w-4 h-4" /> {t({ en: 'Back to News', ka: '\u10e1\u10d8\u10d0\u10ee\u10da\u10d4\u10d4\u10d1\u10d6\u10d4 \u10d3\u10d0\u10d1\u10e0\u10e3\u10dc\u10d4\u10d1\u10d0' })}</Button>
       </div>
@@ -115,7 +129,8 @@ const SidebarArticle = ({ article, title, content, categoryName, readTime, relat
             <div className="flex items-center"><Clock className="w-4 h-4 mr-2" />{readTime} {t({ en: 'min read', ka: '\u10ec\u10d7 \u10e1\u10d0\u10d9\u10d8\u10d7\u10ee\u10d0\u10d5\u10d8' })}</div>
           </div>
           {article.image_url && <div className="rounded-2xl overflow-hidden shadow-lg mb-10 bg-gray-100"><img src={article.image_url} alt={title} className="w-full h-auto object-cover max-h-[500px]" /></div>}
-          <div className="prose prose-lg max-w-none leading-relaxed mb-10 whitespace-pre-wrap" style={{ color: d.text }}>{content}</div>
+          <ContentBlock content={content} style={{ color: d.text }} />
+          <div className="mb-10" />
           <Button variant="outline" onClick={() => navigate('/news')} className="gap-2"><ArrowLeft className="w-4 h-4" /> {t({ en: 'Back to News', ka: '\u10e1\u10d8\u10d0\u10ee\u10da\u10d4\u10d4\u10d1\u10d6\u10d4 \u10d3\u10d0\u10d1\u10e0\u10e3\u10dc\u10d4\u10d1\u10d0' })}</Button>
         </article>
         {/* Sidebar */}

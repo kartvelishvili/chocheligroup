@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/lib/customSupabaseClient';
 import { useToast } from '@/components/ui/use-toast';
-import { Loader2, X, FileImage as ImageIcon, Save } from 'lucide-react';
+import { Loader2, X, FileImage as ImageIcon, Save, Code, Type, Eye } from 'lucide-react';
 
 const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
   const { toast } = useToast();
@@ -18,6 +18,9 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
   
+  const [contentMode, setContentMode] = useState('text'); // 'text' | 'html'
+  const [previewHtml, setPreviewHtml] = useState(null); // which field to preview: 'en' | 'ka' | null
+
   const [formData, setFormData] = useState({
     title_ka: '',
     title_en: '',
@@ -52,6 +55,9 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
           image_path: newsItem.image_path || ''
         });
         setPreviewUrl(newsItem.image_url || '');
+        // Auto-detect HTML content
+        const hasHtml = /<[a-z][\s\S]*>/i.test(newsItem.content_en || '') || /<[a-z][\s\S]*>/i.test(newsItem.content_ka || '');
+        setContentMode(hasHtml ? 'html' : 'text');
       } else {
         // CREATE MODE
         console.log("NewsForm opened in CREATE mode");
@@ -73,6 +79,7 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
       setImageFile(null);
       setUploading(false);
       setLoading(false);
+      setPreviewHtml(null);
     }
   }, [isOpen, newsItem]);
 
@@ -373,14 +380,82 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
              </div>
           </div>
 
-          <div className="space-y-2">
-             <Label htmlFor="content_en">Content (English)</Label>
-             <Textarea id="content_en" name="content_en" value={formData.content_en} onChange={handleInputChange} rows={8} className="font-sans" placeholder="Full article content..." />
-          </div>
+          {/* Content Mode Toggle */}
+          <div className="border border-slate-200 rounded-xl overflow-hidden">
+            <div className="flex items-center justify-between p-3 bg-slate-50 border-b">
+              <Label className="font-bold text-slate-700">Content / კონტენტი</Label>
+              <div className="flex items-center gap-2">
+                <div className="flex gap-1 bg-slate-200 p-0.5 rounded-lg">
+                  <button type="button" onClick={() => { setContentMode('text'); setPreviewHtml(null); }}
+                    className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5 transition-all ${contentMode === 'text' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+                    <Type className="w-3.5 h-3.5" /> ტექსტი
+                  </button>
+                  <button type="button" onClick={() => { setContentMode('html'); setPreviewHtml(null); }}
+                    className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5 transition-all ${contentMode === 'html' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+                    <Code className="w-3.5 h-3.5" /> HTML
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="p-4 space-y-4">
+              {contentMode === 'html' && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-700">
+                  💡 HTML რეჟიმში შეგიძლიათ ჩასვათ სრული HTML კოდი — ეს ზუსტად ისე გამოჩნდება საიტზე როგორც ჩასვამთ.
+                </div>
+              )}
 
-          <div className="space-y-2">
-             <Label htmlFor="content_ka">Content (Georgian)</Label>
-             <Textarea id="content_ka" name="content_ka" value={formData.content_ka} onChange={handleInputChange} rows={8} className="font-sans" placeholder="სრული სტატია..." />
+              {/* English Content */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="content_en">
+                    {contentMode === 'html' ? '🇬🇧 HTML (English)' : '🇬🇧 Content (English)'}
+                  </Label>
+                  {contentMode === 'html' && formData.content_en && (
+                    <button type="button" onClick={() => setPreviewHtml(previewHtml === 'en' ? null : 'en')}
+                      className={`text-xs px-2 py-1 rounded flex items-center gap-1 ${previewHtml === 'en' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}>
+                      <Eye className="w-3 h-3" /> {previewHtml === 'en' ? 'დამალვა' : 'Preview'}
+                    </button>
+                  )}
+                </div>
+                <Textarea id="content_en" name="content_en" value={formData.content_en} onChange={handleInputChange}
+                  rows={contentMode === 'html' ? 12 : 8}
+                  className={contentMode === 'html' ? 'font-mono text-xs bg-slate-900 text-green-400 border-slate-700' : 'font-sans'}
+                  placeholder={contentMode === 'html' ? '<div>\n  <h2>Title</h2>\n  <p>Content here...</p>\n</div>' : 'Full article content...'}
+                />
+                {previewHtml === 'en' && (
+                  <div className="border border-blue-200 rounded-lg p-4 bg-white max-h-[400px] overflow-y-auto">
+                    <p className="text-[10px] text-blue-500 mb-2 uppercase tracking-wider font-bold">HTML Preview</p>
+                    <div dangerouslySetInnerHTML={{ __html: formData.content_en }} />
+                  </div>
+                )}
+              </div>
+
+              {/* Georgian Content */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="content_ka">
+                    {contentMode === 'html' ? '🇬🇪 HTML (ქართული)' : '🇬🇪 კონტენტი (ქართული)'}
+                  </Label>
+                  {contentMode === 'html' && formData.content_ka && (
+                    <button type="button" onClick={() => setPreviewHtml(previewHtml === 'ka' ? null : 'ka')}
+                      className={`text-xs px-2 py-1 rounded flex items-center gap-1 ${previewHtml === 'ka' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}>
+                      <Eye className="w-3 h-3" /> {previewHtml === 'ka' ? 'დამალვა' : 'Preview'}
+                    </button>
+                  )}
+                </div>
+                <Textarea id="content_ka" name="content_ka" value={formData.content_ka} onChange={handleInputChange}
+                  rows={contentMode === 'html' ? 12 : 8}
+                  className={contentMode === 'html' ? 'font-mono text-xs bg-slate-900 text-green-400 border-slate-700' : 'font-sans'}
+                  placeholder={contentMode === 'html' ? '<div>\n  <h2>სათაური</h2>\n  <p>ტექსტი აქ...</p>\n</div>' : 'სრული სტატია...'}
+                />
+                {previewHtml === 'ka' && (
+                  <div className="border border-blue-200 rounded-lg p-4 bg-white max-h-[400px] overflow-y-auto">
+                    <p className="text-[10px] text-blue-500 mb-2 uppercase tracking-wider font-bold">HTML Preview</p>
+                    <div dangerouslySetInnerHTML={{ __html: formData.content_ka }} />
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           <DialogFooter className="sticky bottom-0 bg-white py-4 border-t border-slate-100 mt-6 z-10 gap-2">
