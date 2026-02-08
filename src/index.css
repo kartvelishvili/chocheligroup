@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --corporate-blue: #1a3a52;
+  --corporate-yellow: #F4C430;
+}
+
+body {
+    font-family: 'BPG Glaho WEB', sans-serif;
+    scroll-behavior: smooth;
+    background-color: #0a1628;
+    color: #ffffff;
+}
+
+h1, h2, h3, h4, h5, h6, .heading-font {
+    font-family: 'BPG WEB 002 Caps', sans-serif;
+}
+
+.body-font {
+    font-family: 'BPG Glaho WEB', sans-serif;
+}
+
+/* Corporate Colors Utility Classes */
+.bg-corporate-blue {
+    background-color: var(--corporate-blue);
+}
+.text-corporate-blue {
+    color: var(--corporate-blue);
+}
+.border-corporate-blue {
+    border-color: var(--corporate-blue);
+}
+
+.bg-corporate-yellow {
+    background-color: var(--corporate-yellow);
+}
+.text-corporate-yellow {
+    color: var(--corporate-yellow);
+}
+.border-corporate-yellow {
+    border-color: var(--corporate-yellow);
+}
+
+/* Force dark text in form inputs (body inherits white from design system) */
+input, textarea, select, [contenteditable] {
+  color: #0f172a;
+}
+input::placeholder, textarea::placeholder {
+  color: #94a3b8;
+}
+
+/* Custom Styles for Company Cards */
+.company-card-hover {
+  @apply transition-transform duration-300 hover:scale-105 hover:shadow-xl;
+}
