@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/lib/customSupabaseClient';
 import { useToast } from '@/components/ui/use-toast';
-import { Loader2, X, FileImage as ImageIcon, Save, Code, Type, Eye } from 'lucide-react';
+import { Loader2, X, FileImage as ImageIcon, Save, Code, Type, Eye, AlertCircle, CheckCircle } from 'lucide-react';
 
 const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
   const { toast } = useToast();
@@ -20,6 +20,8 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
   
   const [contentMode, setContentMode] = useState('text'); // 'text' | 'html'
   const [previewHtml, setPreviewHtml] = useState(null); // which field to preview: 'en' | 'ka' | null
+  const [formErrors, setFormErrors] = useState({}); // inline validation error messages
+  const [formStatus, setFormStatus] = useState(null); // { type: 'error'|'success', message: string }
 
   const [formData, setFormData] = useState({
     title_ka: '',
@@ -80,11 +82,17 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
       setUploading(false);
       setLoading(false);
       setPreviewHtml(null);
+      setFormErrors({});
+      setFormStatus(null);
     }
   }, [isOpen, newsItem]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    // Clear inline error for this field
+    if (formErrors[name]) {
+      setFormErrors(prev => ({ ...prev, [name]: null }));
+    }
     setFormData(prev => {
       const newData = { ...prev, [name]: value };
       // Auto-generate slug from English title if creating new article or slug is empty
@@ -147,7 +155,8 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
         .from('news-images')
         .upload(filePath, imageFile, {
           cacheControl: '3600',
-          upsert: false
+          upsert: false,
+          contentType: imageFile.type || 'image/jpeg'
         });
 
       if (uploadError) throw uploadError;
@@ -184,21 +193,34 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
       { key: 'excerpt_ka', label: 'Georgian Excerpt' }
     ];
 
+    const errors = {};
     for (const field of requiredFields) {
-      if (!formData[field.key]) {
-        toast({
-          title: "Validation Error",
-          description: `${field.label} is required.`,
-          variant: "destructive"
-        });
-        return false;
+      if (!formData[field.key] || formData[field.key].trim?.() === '') {
+        errors[field.key] = `${field.label} is required`;
       }
     }
+
+    setFormErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      const firstError = Object.values(errors)[0];
+      setFormStatus({ type: 'error', message: `Please fill in all required fields. ${firstError}.` });
+      toast({
+        title: "Validation Error",
+        description: firstError,
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    setFormStatus(null);
     return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormStatus(null);
+    
     if (!validateForm()) return;
 
     setLoading(true);
@@ -211,23 +233,37 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
       };
 
       if (imageFile) {
-        imageData = await uploadImage();
+        try {
+          imageData = await uploadImage();
+        } catch (uploadErr) {
+          // Image upload failed - ask user if they want to save without image
+          console.warn("Image upload failed, saving article without image:", uploadErr.message);
+          setFormStatus({ type: 'error', message: `Image upload failed: ${uploadErr.message}. Saving article without image...` });
+          imageData = { image_url: null, image_path: null };
+        }
       }
 
+      // Build payload - ensure UUID fields are null not empty string
+      const categoryId = formData.category_id && formData.category_id.trim() !== '' 
+        ? formData.category_id 
+        : null;
+
       const payload = {
-        title_ka: formData.title_ka,
-        title_en: formData.title_en,
-        excerpt_ka: formData.excerpt_ka,
-        excerpt_en: formData.excerpt_en,
-        content_ka: formData.content_ka,
-        content_en: formData.content_en,
-        slug: formData.slug,
-        category_id: formData.category_id,
+        title_ka: formData.title_ka?.trim() || '',
+        title_en: formData.title_en?.trim() || '',
+        excerpt_ka: formData.excerpt_ka?.trim() || '',
+        excerpt_en: formData.excerpt_en?.trim() || '',
+        content_ka: formData.content_ka || '',
+        content_en: formData.content_en || '',
+        slug: formData.slug?.trim().toLowerCase().replace(/\s+/g, '-') || '',
+        category_id: categoryId,
         published: formData.status === 'published',
-        image_url: imageData.image_url || null,
-        image_path: imageData.image_path || null,
+        image_url: imageData?.image_url || null,
+        image_path: imageData?.image_path || null,
         updated_at: new Date().toISOString()
       };
+
+      console.log("Payload to send:", JSON.stringify(payload, null, 2));
 
       let result;
       let error;
@@ -270,20 +306,27 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
 
       console.log("Operation Successful!", result);
       
+      setFormStatus({ type: 'success', message: newsItem ? 'Article updated successfully!' : 'Article created successfully!' });
+      
       toast({
         title: "Success",
         description: newsItem ? "Article updated successfully" : "Article created successfully",
         className: "bg-green-600 text-white"
       });
 
-      if (onSuccess) onSuccess();
-      onClose();
+      // Small delay to let user see success message before closing
+      setTimeout(() => {
+        if (onSuccess) onSuccess();
+        onClose();
+      }, 500);
 
     } catch (error) {
       console.error('Failed to save news:', error);
+      const errorMsg = error.message || "Failed to save article. Please check your connection.";
+      setFormStatus({ type: 'error', message: errorMsg });
       toast({
         title: "Error",
-        description: error.message || "Failed to save article. Please check your connection.",
+        description: errorMsg,
         variant: "destructive"
       });
     } finally {
@@ -293,8 +336,8 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl w-full max-h-[95vh] overflow-y-auto bg-white p-6">
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open && !loading) onClose(); }}>
+      <DialogContent className="max-w-4xl w-full max-h-[95vh] overflow-y-auto bg-white p-6" onPointerDownOutside={(e) => { if (loading) e.preventDefault(); }} onInteractOutside={(e) => { if (loading) e.preventDefault(); }}>
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">{newsItem ? 'Edit Article' : 'New Article'}</DialogTitle>
           <DialogDescription>
@@ -303,37 +346,56 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-6 mt-4">
+          {/* Form Status Banner */}
+          {formStatus && (
+            <div className={`flex items-center gap-3 p-4 rounded-lg border text-sm font-medium ${
+              formStatus.type === 'error' 
+                ? 'bg-red-50 border-red-200 text-red-700' 
+                : 'bg-green-50 border-green-200 text-green-700'
+            }`}>
+              {formStatus.type === 'error' ? <AlertCircle className="w-5 h-5 shrink-0" /> : <CheckCircle className="w-5 h-5 shrink-0" />}
+              <span>{formStatus.message}</span>
+              <button type="button" onClick={() => setFormStatus(null)} className="ml-auto p-1 rounded hover:bg-black/5">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
                <div className="space-y-2">
                  <Label htmlFor="title_en">Title (English) *</Label>
-                 <Input id="title_en" name="title_en" value={formData.title_en} onChange={handleInputChange} required placeholder="Article Title" />
+                 <Input id="title_en" name="title_en" value={formData.title_en} onChange={handleInputChange} placeholder="Article Title" className={formErrors.title_en ? 'border-red-400 focus:ring-red-400' : ''} />
+                 {formErrors.title_en && <p className="text-xs text-red-500 mt-1">{formErrors.title_en}</p>}
                </div>
                <div className="space-y-2">
                  <Label htmlFor="title_ka">Title (Georgian) *</Label>
-                 <Input id="title_ka" name="title_ka" value={formData.title_ka} onChange={handleInputChange} required placeholder="სტატიის სათაური" />
+                 <Input id="title_ka" name="title_ka" value={formData.title_ka} onChange={handleInputChange} placeholder="სტატიის სათაური" className={formErrors.title_ka ? 'border-red-400 focus:ring-red-400' : ''} />
+                 {formErrors.title_ka && <p className="text-xs text-red-500 mt-1">{formErrors.title_ka}</p>}
                </div>
                
                <div className="space-y-2">
                  <Label htmlFor="slug">Slug *</Label>
-                 <Input id="slug" name="slug" value={formData.slug} onChange={handleInputChange} required placeholder="article-slug" className="font-mono text-sm bg-slate-50" />
+                 <Input id="slug" name="slug" value={formData.slug} onChange={handleInputChange} placeholder="article-slug" className={`font-mono text-sm bg-slate-50 ${formErrors.slug ? 'border-red-400 focus:ring-red-400' : ''}`} />
+                 {formErrors.slug && <p className="text-xs text-red-500 mt-1">{formErrors.slug}</p>}
                </div>
 
                <div className="grid grid-cols-2 gap-4">
                  <div className="space-y-2">
                    <Label htmlFor="category_id">Category *</Label>
-                   <Select value={formData.category_id} onValueChange={(v) => setFormData(p => ({...p, category_id: v}))}>
-                     <SelectTrigger id="category_id"><SelectValue placeholder="Select" /></SelectTrigger>
-                     <SelectContent>
+                   <Select value={formData.category_id} onValueChange={(v) => { setFormData(p => ({...p, category_id: v})); setFormErrors(prev => ({...prev, category_id: null})); }}>
+                     <SelectTrigger id="category_id" className={formErrors.category_id ? 'border-red-400' : ''}><SelectValue placeholder="Select" /></SelectTrigger>
+                     <SelectContent className="z-[200]">
                        {categories.map(c => <SelectItem key={c.id} value={c.id}>{c.name_en} / {c.name_ka}</SelectItem>)}
                      </SelectContent>
                    </Select>
+                   {formErrors.category_id && <p className="text-xs text-red-500 mt-1">{formErrors.category_id}</p>}
                  </div>
                  <div className="space-y-2">
                    <Label htmlFor="status">Status</Label>
                    <Select value={formData.status} onValueChange={(v) => setFormData(p => ({...p, status: v}))}>
                      <SelectTrigger id="status"><SelectValue /></SelectTrigger>
-                     <SelectContent>
+                     <SelectContent className="z-[200]">
                        <SelectItem value="draft">Draft</SelectItem>
                        <SelectItem value="published">Published</SelectItem>
                      </SelectContent>
@@ -372,11 +434,13 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              <div className="space-y-2">
                <Label htmlFor="excerpt_en">Excerpt (English) *</Label>
-               <Textarea id="excerpt_en" name="excerpt_en" value={formData.excerpt_en} onChange={handleInputChange} rows={3} placeholder="Short summary displayed on cards..." />
+               <Textarea id="excerpt_en" name="excerpt_en" value={formData.excerpt_en} onChange={handleInputChange} rows={3} placeholder="Short summary displayed on cards..." className={formErrors.excerpt_en ? 'border-red-400 focus:ring-red-400' : ''} />
+               {formErrors.excerpt_en && <p className="text-xs text-red-500 mt-1">{formErrors.excerpt_en}</p>}
              </div>
              <div className="space-y-2">
                <Label htmlFor="excerpt_ka">Excerpt (Georgian) *</Label>
-               <Textarea id="excerpt_ka" name="excerpt_ka" value={formData.excerpt_ka} onChange={handleInputChange} rows={3} placeholder="მოკლე აღწერა..." />
+               <Textarea id="excerpt_ka" name="excerpt_ka" value={formData.excerpt_ka} onChange={handleInputChange} rows={3} placeholder="მოკლე აღწერა..." className={formErrors.excerpt_ka ? 'border-red-400 focus:ring-red-400' : ''} />
+               {formErrors.excerpt_ka && <p className="text-xs text-red-500 mt-1">{formErrors.excerpt_ka}</p>}
              </div>
           </div>
 
