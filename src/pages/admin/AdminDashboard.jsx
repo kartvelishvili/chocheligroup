@@ -16,12 +16,16 @@ import {
   Globe,
   Activity,
   BarChart3,
-  Sparkles
+  Sparkles,
+  Trash2,
+  RefreshCw,
+  Loader2
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { motion } from 'framer-motion';
+import { useToast } from '@/components/ui/use-toast';
 
 const StatCard = ({ title, value, icon: Icon, color, bgColor, loading, subtitle }) => (
   <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 overflow-hidden">
@@ -72,6 +76,7 @@ const ActivityItem = ({ title, time, type }) => (
 );
 
 const AdminDashboard = () => {
+  const { toast } = useToast();
   const [stats, setStats] = useState({
     totalNews: 0,
     publishedNews: 0,
@@ -82,6 +87,57 @@ const AdminDashboard = () => {
   });
   const [recentActivity, setRecentActivity] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [clearingCache, setClearingCache] = useState(false);
+  const [currentCacheVersion, setCurrentCacheVersion] = useState(null);
+
+  // ─── Fetch current cache version ───
+  useEffect(() => {
+    const fetchCacheVersion = async () => {
+      try {
+        const { data } = await supabase
+          .from('site_settings')
+          .select('value')
+          .eq('key', 'cache_version')
+          .single();
+        if (data) setCurrentCacheVersion(data.value);
+      } catch (e) {
+        // Table may not exist yet
+      }
+    };
+    fetchCacheVersion();
+  }, []);
+
+  // ─── Clear Cache Handler ───
+  const handleClearCache = async () => {
+    setClearingCache(true);
+    try {
+      const newVersion = Date.now().toString();
+      
+      // Try upsert first
+      const { error: upsertError } = await supabase
+        .from('site_settings')
+        .upsert({ key: 'cache_version', value: newVersion, updated_at: new Date().toISOString() }, { onConflict: 'key' });
+      
+      if (upsertError) throw upsertError;
+
+      setCurrentCacheVersion(newVersion);
+      localStorage.setItem('_cache_version', newVersion);
+
+      toast({
+        title: '✅ ქეში გასუფთავდა!',
+        description: `ახალი ვერსია: ${newVersion}. მომხმარებლები გვერდის განახლებისას მიიღებენ ახალ ვერსიას.`,
+      });
+    } catch (error) {
+      console.error('Cache clear error:', error);
+      toast({
+        title: '❌ შეცდომა',
+        description: `ქეშის გასუფთავება ვერ მოხერხდა: ${error.message}. შესაძლოა 'site_settings' ცხრილი არ არსებობს. გაუშვით SQL სკრიპტი Supabase-ში.`,
+        variant: 'destructive',
+      });
+    } finally {
+      setClearingCache(false);
+    }
+  };
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -158,7 +214,7 @@ const AdminDashboard = () => {
             <h1 className="text-2xl lg:text-3xl font-bold">გამარჯობა, ადმინისტრატორო!</h1>
             <p className="text-blue-100 mt-1 text-sm lg:text-base">მართეთ საიტის კონტენტი, სიახლეები და კომპანიების ინფორმაცია.</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <Button asChild className="bg-white text-blue-700 hover:bg-blue-50 font-semibold shadow-lg">
               <Link to="/admin/news">
                 <Plus size={16} className="mr-2" /> ახალი სიახლე
@@ -171,6 +227,49 @@ const AdminDashboard = () => {
             </Button>
           </div>
         </div>
+      </motion.div>
+
+      {/* Cache Clear Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        <Card className="border-0 shadow-md border-l-4 border-l-orange-400">
+          <CardContent className="p-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <div className="p-2.5 rounded-xl bg-orange-50">
+                  <RefreshCw size={20} className="text-orange-500" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-slate-800 text-sm">ქეშის მართვა</h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    თუ მომხმარებლებს ძველი დიზაინი უჩანს, დააჭირეთ ქეშის გასუფთავებას.
+                    <br />ეს აიძულებს ყველა მომხმარებელს ჩამოტვირთოს საიტის ახალი ვერსია.
+                  </p>
+                  {currentCacheVersion && (
+                    <p className="text-[10px] text-slate-400 mt-1.5 font-mono">
+                      მიმდინარე ვერსია: {currentCacheVersion}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <Button
+                onClick={handleClearCache}
+                disabled={clearingCache}
+                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold shadow-md shrink-0"
+              >
+                {clearingCache ? (
+                  <Loader2 size={16} className="mr-2 animate-spin" />
+                ) : (
+                  <Trash2 size={16} className="mr-2" />
+                )}
+                {clearingCache ? 'მიმდინარეობს...' : 'ქეშის გასუფთავება'}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </motion.div>
 
       {/* Stats Grid */}
