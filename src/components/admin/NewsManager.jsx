@@ -12,9 +12,12 @@ import {
   Filter, 
   Trash2, 
   Eye,
+  ExternalLink,
   RefreshCw,
   Image as ImageIcon,
-  Newspaper
+  Newspaper,
+  X,
+  Calendar
 } from 'lucide-react';
 import { 
   Select, 
@@ -52,6 +55,7 @@ const NewsManager = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingNews, setEditingNews] = useState(null);
   const [deletingNews, setDeletingNews] = useState(null);
+  const [previewingNews, setPreviewingNews] = useState(null);
   
   const { toast } = useToast();
 
@@ -257,7 +261,8 @@ const NewsManager = () => {
         ) : (
           <div className="divide-y divide-slate-100">
             {filteredNews.map((item) => (
-              <div key={item.id} className="grid grid-cols-1 md:grid-cols-12 gap-4 p-4 items-center hover:bg-slate-50 transition-colors group">
+              <React.Fragment key={item.id}>
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 p-4 items-center hover:bg-slate-50 transition-colors group">
                 <div className="col-span-12 md:col-span-1">
                   <div className="w-12 h-12 rounded-lg bg-slate-100 overflow-hidden border border-slate-200 relative">
                     {item.image_url ? (
@@ -291,9 +296,17 @@ const NewsManager = () => {
                 </div>
 
                 <div className="col-span-12 md:col-span-2 flex justify-end gap-2">
+                   <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setPreviewingNews(previewingNews?.id === item.id ? null : item)} title="Preview">
+                     <Eye className={`w-4 h-4 ${previewingNews?.id === item.id ? 'text-blue-600' : 'text-slate-400 hover:text-blue-600'}`} />
+                   </Button>
                    {item.published && (
                       <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => window.open(`/news/${item.slug}`, '_blank')} title="View Live">
-                        <Eye className="w-4 h-4 text-slate-400 hover:text-blue-600" />
+                        <ExternalLink className="w-4 h-4 text-slate-400 hover:text-green-600" />
+                      </Button>
+                   )}
+                   {!item.published && (
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => window.open(`/news/${item.slug}?preview=true`, '_blank')} title="Preview Live (Draft)">
+                        <ExternalLink className="w-4 h-4 text-slate-400 hover:text-amber-600" />
                       </Button>
                    )}
                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(item)} title="Edit Article">
@@ -304,6 +317,62 @@ const NewsManager = () => {
                    </Button>
                 </div>
               </div>
+
+              {/* Inline Preview Panel */}
+              {previewingNews?.id === item.id && (
+                <div className="border-t border-blue-100 bg-blue-50/50 p-6 animate-in slide-in-from-top-2 duration-200">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <Eye className="w-4 h-4 text-blue-600" />
+                      <span className="text-sm font-bold text-blue-700">Preview</span>
+                      {!item.published && (
+                        <Badge className="bg-amber-100 text-amber-700 border-0 text-xs">Draft</Badge>
+                      )}
+                    </div>
+                    <button onClick={() => setPreviewingNews(null)} className="p-1 rounded-full hover:bg-blue-100 text-blue-400 hover:text-blue-600 transition-colors">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {item.image_url && (
+                      <div className="md:col-span-1">
+                        <img src={item.image_url} alt="" className="w-full h-48 object-cover rounded-lg shadow-sm border border-slate-200" />
+                      </div>
+                    )}
+                    <div className={item.image_url ? "md:col-span-2" : "md:col-span-3"}>
+                      <h3 className="text-lg font-bold text-slate-900 mb-1">{item.title_en}</h3>
+                      <h4 className="text-sm text-slate-600 mb-3">{item.title_ka}</h4>
+                      <div className="flex items-center gap-4 text-xs text-slate-500 mb-3">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          {new Date(item.created_at).toLocaleDateString('ka-GE', { year: 'numeric', month: 'long', day: 'numeric' })}
+                        </div>
+                        <Badge variant="outline" className="text-xs bg-slate-50">{item.news_categories?.name_en || 'Uncategorized'}</Badge>
+                      </div>
+                      {(item.excerpt_en || item.excerpt_ka) && (
+                        <div className="bg-white rounded-lg p-3 border border-slate-200 mb-3">
+                          <p className="text-sm text-slate-600 leading-relaxed line-clamp-3">{item.excerpt_en || item.excerpt_ka}</p>
+                        </div>
+                      )}
+                      {(item.content_en || item.content_ka) && (
+                        <p className="text-xs text-slate-400">
+                          {((item.content_en || item.content_ka || '').replace(/<[^>]*>/g, '').substring(0, 200))}...
+                        </p>
+                      )}
+                      <div className="flex gap-2 mt-3">
+                        <Button size="sm" variant="outline" className="text-xs h-7" onClick={() => { handleEdit(item); setPreviewingNews(null); }}>
+                          <Edit className="w-3 h-3 mr-1" /> Edit
+                        </Button>
+                        <Button size="sm" variant="outline" className="text-xs h-7"
+                          onClick={() => window.open(`/news/${item.slug}${item.published ? '' : '?preview=true'}`, '_blank')}>
+                          <ExternalLink className="w-3 h-3 mr-1" /> Open
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              </React.Fragment>
             ))}
           </div>
         )}

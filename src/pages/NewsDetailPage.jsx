@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/lib/customSupabaseClient';
@@ -7,15 +7,105 @@ import { ArrowLeft, Calendar, Clock, RefreshCw } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { useDesign } from '@/hooks/useDesign';
+import DOMPurify from 'dompurify';
 
 /* Helper: detect if content is HTML */
 const isHtmlContent = (text) => /<[a-z][\s\S]*>/i.test(text || '');
 
-/* Render content — plain text or HTML */
+/* Sanitize HTML — allow embeds, iframes, styles but strip dangerous JS */
+const sanitizeHtml = (html) => {
+  return DOMPurify.sanitize(html, {
+    ADD_TAGS: ['iframe', 'style'],
+    ADD_ATTR: [
+      'allow', 'allowfullscreen', 'frameborder', 'scrolling',
+      'data-href', 'data-show-text', 'data-width', 'data-lazy',
+      'src', 'width', 'height', 'style', 'class', 'target', 'rel'
+    ],
+    ALLOW_DATA_ATTR: true,
+  });
+};
+
+/* Render content — plain text or HTML with script execution for embeds */
 const ContentBlock = ({ content, style }) => {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (!containerRef.current || !content || !isHtmlContent(content)) return;
+
+    const container = containerRef.current;
+
+    // Find and execute inline/external scripts that DOMPurify stripped
+    const scriptMatches = content.match(/<script[\s\S]*?<\/script>/gi) || [];
+    
+    scriptMatches.forEach((scriptTag) => {
+      const srcMatch = scriptTag.match(/src=["']([^"']+)["']/);
+      const newScript = document.createElement('script');
+
+      if (srcMatch) {
+        // External script (e.g. Facebook SDK)
+        newScript.src = srcMatch[1];
+        newScript.async = true;
+        newScript.defer = true;
+        if (scriptTag.includes('crossorigin')) {
+          newScript.crossOrigin = 'anonymous';
+        }
+      } else {
+        // Inline script
+        const inlineContent = scriptTag.replace(/<script[\s\S]*?>/, '').replace(/<\/script>/, '');
+        if (inlineContent.trim()) {
+          newScript.textContent = inlineContent;
+        }
+      }
+
+      // Avoid duplicate SDK loads
+      if (newScript.src) {
+        const existing = document.querySelector(`script[src="${newScript.src}"]`);
+        if (existing) {
+          // SDK already loaded — just re-parse widgets
+          if (window.FB && container.querySelector('.fb-post, .fb-video, .fb-page')) {
+            window.FB.XFBML.parse(container);
+          }
+          if (window.twttr && container.querySelector('.twitter-tweet')) {
+            window.twttr.widgets.load(container);
+          }
+          return;
+        }
+      }
+
+      container.appendChild(newScript);
+    });
+
+    // Re-parse Facebook embeds if SDK was already loaded
+    const hasFbEmbed = container.querySelector('.fb-post, .fb-video, .fb-page');
+    if (hasFbEmbed && window.FB) {
+      window.FB.XFBML.parse(container);
+    }
+
+    // Ensure fb-root exists
+    if (hasFbEmbed && !document.getElementById('fb-root')) {
+      const fbRoot = document.createElement('div');
+      fbRoot.id = 'fb-root';
+      document.body.prepend(fbRoot);
+    }
+
+    return () => {
+      // Cleanup appended scripts on unmount
+      const scripts = container.querySelectorAll('script');
+      scripts.forEach(s => s.remove());
+    };
+  }, [content]);
+
   if (!content) return null;
+
   if (isHtmlContent(content)) {
-    return <div className="prose prose-lg max-w-none leading-relaxed" style={style} dangerouslySetInnerHTML={{ __html: content }} />;
+    return (
+      <div
+        ref={containerRef}
+        className="prose prose-lg max-w-none leading-relaxed news-html-content"
+        style={style}
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(content) }}
+      />
+    );
   }
   return <div className="prose prose-lg max-w-none leading-relaxed whitespace-pre-wrap" style={style}>{content}</div>;
 };
@@ -164,6 +254,8 @@ const LAYOUTS = { classic: ClassicArticle, wide: WideArticle, sidebar: SidebarAr
 const NewsDetailPage = () => {
   const { slug } = useParams();
   const { t, language } = useLanguage();
+  const [searchParams] = useSearchParams();
+  const isPreview = searchParams.get('preview') === 'true';
   const [article, setArticle] = useState(null);
   const [relatedNews, setRelatedNews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -180,7 +272,8 @@ const NewsDetailPage = () => {
       try {
         const { data, error: fetchError } = await supabase.from('news').select('*, news_categories(name_ka, name_en)').eq('slug', slug).single();
         if (fetchError) throw fetchError;
-        if (!data || !data.published) throw new Error("Article not found");
+        // Allow draft articles if preview mode is on
+        if (!data || (!data.published && !isPreview)) throw new Error("Article not found");
         setArticle(data);
         const { data: related } = await supabase.from('news').select('id, title_ka, title_en, slug, created_at, image_url').eq('published', true).eq('category_id', data.category_id).neq('id', data.id).limit(3);
         setRelatedNews(related || []);
@@ -190,7 +283,7 @@ const NewsDetailPage = () => {
       } finally { setLoading(false); }
     };
     if (slug) fetchArticle();
-  }, [slug]);
+  }, [slug, isPreview]);
 
   if (loading) {
     return (
@@ -225,6 +318,12 @@ const NewsDetailPage = () => {
   return (
     <>
       <Helmet><title>{title} - Chocheli Investment Group</title></Helmet>
+      {/* Preview banner for draft articles */}
+      {isPreview && !article.published && (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-amber-500 text-white text-center py-2 text-sm font-medium shadow-md">
+          ⚠️ {t({ en: 'PREVIEW MODE — This article is not published yet', ka: 'პრევიუ რეჟიმი — ეს სტატია ჯერ არ არის გამოქვეყნებული' })}
+        </div>
+      )}
       <LayoutComponent article={article} title={title} content={content} categoryName={categoryName} readTime={readTime} relatedNews={relatedNews} d={d} t={t} language={language} navigate={navigate} />
     </>
   );

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,6 +9,85 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/lib/customSupabaseClient';
 import { useToast } from '@/components/ui/use-toast';
 import { Loader2, X, FileImage as ImageIcon, Save, Code, Type, Eye, AlertCircle, CheckCircle } from 'lucide-react';
+
+/* ─── Sandboxed HTML Preview (renders scripts like FB SDK inside iframe) ─── */
+const HtmlPreview = ({ content, label }) => {
+  const iframeRef = useRef(null);
+  const [iframeHeight, setIframeHeight] = useState(200);
+
+  const writeToIframe = useCallback(() => {
+    const iframe = iframeRef.current;
+    if (!iframe || !content) return;
+
+    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!doc) return;
+
+    const htmlDoc = `<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1e293b; padding: 16px; line-height: 1.6; font-size: 15px; background: #fff; }
+  img, video, iframe { max-width: 100%; height: auto; border-radius: 8px; }
+  h1,h2,h3,h4,h5,h6 { margin: 0.8em 0 0.4em; font-weight: 700; }
+  p { margin: 0.5em 0; }
+  a { color: #2563eb; }
+  .fb-post, .fb-video { max-width: 100% !important; }
+  .fb-post > span, .fb-post iframe { width: 100% !important; }
+</style>
+</head><body>
+${content}
+<script>
+  // Auto-resize iframe to content height
+  function notifyHeight() {
+    window.parent.postMessage({ type: 'iframe-height', height: document.body.scrollHeight + 40 }, '*');
+  }
+  new MutationObserver(notifyHeight).observe(document.body, { childList: true, subtree: true, attributes: true });
+  window.addEventListener('load', () => setTimeout(notifyHeight, 500));
+  setTimeout(notifyHeight, 100);
+  setTimeout(notifyHeight, 1000);
+  setTimeout(notifyHeight, 3000);
+</script>
+</body></html>`;
+
+    doc.open();
+    doc.write(htmlDoc);
+    doc.close();
+  }, [content]);
+
+  useEffect(() => {
+    const handleMessage = (e) => {
+      if (e.data?.type === 'iframe-height' && typeof e.data.height === 'number') {
+        setIframeHeight(Math.min(Math.max(e.data.height, 100), 600));
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  useEffect(() => {
+    // Small delay to ensure iframe is mounted
+    const timer = setTimeout(writeToIframe, 50);
+    return () => clearTimeout(timer);
+  }, [writeToIframe]);
+
+  return (
+    <div className="border border-blue-200 rounded-lg overflow-hidden bg-white">
+      <div className="flex items-center justify-between px-3 py-1.5 bg-blue-50 border-b border-blue-100">
+        <p className="text-[10px] text-blue-600 uppercase tracking-wider font-bold">{label || 'HTML Preview'}</p>
+        <span className="text-[9px] text-blue-400">sandbox iframe</span>
+      </div>
+      <iframe
+        ref={iframeRef}
+        title="preview"
+        sandbox="allow-scripts allow-same-origin allow-popups"
+        className="w-full border-0"
+        style={{ height: `${iframeHeight}px`, minHeight: '100px' }}
+      />
+    </div>
+  );
+};
 
 const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
   const { toast } = useToast();
@@ -112,10 +191,24 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
     setFormData(prev => ({ ...prev, image_url: '', image_path: '' }));
   };
 
+  const deleteOldImage = async (oldImagePath) => {
+    if (!oldImagePath) return;
+    try {
+      const { error } = await supabase.storage
+        .from('news-images')
+        .remove([oldImagePath]);
+      if (error) console.warn('Failed to delete old image:', error);
+      else console.log('[NewsForm] Old image deleted:', oldImagePath);
+    } catch (err) {
+      console.warn('Error deleting old image:', err);
+    }
+  };
+
   const uploadImage = async () => {
     if (!imageFile) return null;
     try {
       setUploading(true);
+      console.log('[NewsForm] Starting image upload...');
       const fileExt = imageFile.name.split('.').pop();
       const cleanFileName = imageFile.name.replace(/[^a-zA-Z0-9]/g, '_');
       const fileName = `${Date.now()}-${cleanFileName}.${fileExt}`;
@@ -132,10 +225,16 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
       if (uploadError) throw uploadError;
 
       const { data } = supabase.storage.from('news-images').getPublicUrl(filePath);
+      console.log('[NewsForm] Image uploaded successfully:', data.publicUrl);
       return { image_url: data.publicUrl, image_path: filePath };
     } catch (error) {
       console.error('Image upload failed:', error);
-      return null;
+      toast({
+        title: "სურათის ატვირთვა ვერ მოხერხდა",
+        description: error.message || 'Upload failed. Check storage bucket settings.',
+        variant: "destructive"
+      });
+      throw error;
     } finally {
       setUploading(false);
     }
@@ -176,8 +275,21 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
       };
 
       if (imageFile) {
-        const uploadResult = await uploadImage();
-        if (uploadResult) imageData = uploadResult;
+        try {
+          const uploadResult = await uploadImage();
+          if (uploadResult) {
+            // Delete old image from storage when replacing
+            if (newsItem?.image_path && newsItem.image_path !== imageData.image_path) {
+              await deleteOldImage(newsItem.image_path);
+            }
+            imageData = uploadResult;
+          }
+        } catch (uploadErr) {
+          // Upload failed — toast already shown, stop save
+          setFormStatus({ type: 'error', message: 'სურათის ატვირთვა ვერ მოხერხდა. სცადეთ თავიდან.' });
+          setLoading(false);
+          return;
+        }
       }
 
       const payload = {
@@ -250,14 +362,14 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) handleClose(); }}>
       <DialogContent 
-        className="max-w-4xl w-full max-h-[95vh] overflow-y-auto bg-white p-6"
+        className="max-w-4xl w-full max-h-[95vh] overflow-y-auto bg-slate-50 text-slate-900 p-6 border border-slate-200"
         onPointerDownOutside={(e) => e.preventDefault()}
         onInteractOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => { if (loading) e.preventDefault(); }}
       >
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">{newsItem ? 'სტატიის რედაქტირება' : 'ახალი სტატია'}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-xl font-bold text-slate-900">{newsItem ? 'სტატიის რედაქტირება' : 'ახალი სტატია'}</DialogTitle>
+          <DialogDescription className="text-slate-500">
             {newsItem ? 'შეცვალეთ არსებული სტატიის დეტალები.' : 'შექმენით ახალი სიახლე.'}
           </DialogDescription>
         </DialogHeader>
@@ -282,17 +394,17 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
             <div className="space-y-4">
                <div className="space-y-1.5">
                  <Label htmlFor="title_en">Title (English) *</Label>
-                 <Input id="title_en" name="title_en" value={formData.title_en} onChange={handleInputChange} placeholder="Article Title" className={formErrors.title_en ? 'border-red-400 ring-1 ring-red-400' : ''} />
+                 <Input id="title_en" name="title_en" value={formData.title_en} onChange={handleInputChange} placeholder="Article Title" className={`bg-white border-slate-300 ${formErrors.title_en ? 'border-red-400 ring-1 ring-red-400' : ''}`} />
                  {formErrors.title_en && <p className="text-xs text-red-500">{formErrors.title_en}</p>}
                </div>
                <div className="space-y-1.5">
                  <Label htmlFor="title_ka">სათაური (ქართული) *</Label>
-                 <Input id="title_ka" name="title_ka" value={formData.title_ka} onChange={handleInputChange} placeholder="სტატიის სათაური" className={formErrors.title_ka ? 'border-red-400 ring-1 ring-red-400' : ''} />
+                 <Input id="title_ka" name="title_ka" value={formData.title_ka} onChange={handleInputChange} placeholder="სტატიის სათაური" className={`bg-white border-slate-300 ${formErrors.title_ka ? 'border-red-400 ring-1 ring-red-400' : ''}`} />
                  {formErrors.title_ka && <p className="text-xs text-red-500">{formErrors.title_ka}</p>}
                </div>
                <div className="space-y-1.5">
                  <Label htmlFor="slug">Slug *</Label>
-                 <Input id="slug" name="slug" value={formData.slug} onChange={handleInputChange} placeholder="article-slug" className={`font-mono text-sm bg-slate-50 ${formErrors.slug ? 'border-red-400 ring-1 ring-red-400' : ''}`} />
+                 <Input id="slug" name="slug" value={formData.slug} onChange={handleInputChange} placeholder="article-slug" className={`font-mono text-sm bg-white border-slate-300 ${formErrors.slug ? 'border-red-400 ring-1 ring-red-400' : ''}`} />
                  {formErrors.slug && <p className="text-xs text-red-500">{formErrors.slug}</p>}
                </div>
 
@@ -307,7 +419,7 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
                        if (formStatus) setFormStatus(null);
                      }}
                    >
-                     <SelectTrigger className={formErrors.category_id ? 'border-red-400 ring-1 ring-red-400' : ''}>
+                     <SelectTrigger className={`bg-white border-slate-300 ${formErrors.category_id ? 'border-red-400 ring-1 ring-red-400' : ''}`}>
                        <SelectValue placeholder="აირჩიეთ..." />
                      </SelectTrigger>
                      <SelectContent className="z-[9999] bg-white">
@@ -321,7 +433,7 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
                  <div className="space-y-1.5">
                    <Label>სტატუსი</Label>
                    <Select value={formData.status} onValueChange={(v) => setFormData(p => ({...p, status: v}))}>
-                     <SelectTrigger><SelectValue /></SelectTrigger>
+                     <SelectTrigger className="bg-white border-slate-300"><SelectValue /></SelectTrigger>
                      <SelectContent className="z-[9999] bg-white">
                        <SelectItem value="draft">დრაფტი</SelectItem>
                        <SelectItem value="published">გამოქვეყნებული</SelectItem>
@@ -361,12 +473,12 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              <div className="space-y-1.5">
                <Label htmlFor="excerpt_en">Excerpt (English) *</Label>
-               <Textarea id="excerpt_en" name="excerpt_en" value={formData.excerpt_en} onChange={handleInputChange} rows={3} placeholder="Short summary..." className={formErrors.excerpt_en ? 'border-red-400 ring-1 ring-red-400' : ''} />
+               <Textarea id="excerpt_en" name="excerpt_en" value={formData.excerpt_en} onChange={handleInputChange} rows={3} placeholder="Short summary..." className={`bg-white border-slate-300 ${formErrors.excerpt_en ? 'border-red-400 ring-1 ring-red-400' : ''}`} />
                {formErrors.excerpt_en && <p className="text-xs text-red-500">{formErrors.excerpt_en}</p>}
              </div>
              <div className="space-y-1.5">
                <Label htmlFor="excerpt_ka">აღწერა (ქართული) *</Label>
-               <Textarea id="excerpt_ka" name="excerpt_ka" value={formData.excerpt_ka} onChange={handleInputChange} rows={3} placeholder="მოკლე აღწერა..." className={formErrors.excerpt_ka ? 'border-red-400 ring-1 ring-red-400' : ''} />
+               <Textarea id="excerpt_ka" name="excerpt_ka" value={formData.excerpt_ka} onChange={handleInputChange} rows={3} placeholder="მოკლე აღწერა..." className={`bg-white border-slate-300 ${formErrors.excerpt_ka ? 'border-red-400 ring-1 ring-red-400' : ''}`} />
                {formErrors.excerpt_ka && <p className="text-xs text-red-500">{formErrors.excerpt_ka}</p>}
              </div>
           </div>
@@ -395,54 +507,48 @@ const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="content_en">{contentMode === 'html' ? '🇬🇧 HTML (English)' : '🇬🇧 Content (English)'}</Label>
-                  {contentMode === 'html' && formData.content_en && (
+                  {formData.content_en && (
                     <button type="button" onClick={() => setPreviewHtml(previewHtml === 'en' ? null : 'en')}
                       className={`text-xs px-2 py-1 rounded flex items-center gap-1 ${previewHtml === 'en' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}>
-                      <Eye className="w-3 h-3" /> Preview
+                      <Eye className="w-3 h-3" /> {previewHtml === 'en' ? 'დახურვა' : 'Preview'}
                     </button>
                   )}
                 </div>
                 <Textarea id="content_en" name="content_en" value={formData.content_en} onChange={handleInputChange}
                   rows={contentMode === 'html' ? 12 : 8}
-                  className={contentMode === 'html' ? 'font-mono text-xs bg-slate-900 text-green-400 border-slate-700' : 'font-sans'}
+                  className={contentMode === 'html' ? 'font-mono text-xs bg-slate-900 text-green-400 border-slate-700' : 'font-sans bg-white border-slate-300'}
                   placeholder={contentMode === 'html' ? '<div>\n  <h2>Title</h2>\n  <p>Content...</p>\n</div>' : 'Full article content...'}
                 />
-                {previewHtml === 'en' && (
-                  <div className="border border-blue-200 rounded-lg p-4 bg-white max-h-[400px] overflow-y-auto">
-                    <p className="text-[10px] text-blue-500 mb-2 uppercase tracking-wider font-bold">HTML Preview</p>
-                    <div dangerouslySetInnerHTML={{ __html: formData.content_en }} />
-                  </div>
+                {previewHtml === 'en' && formData.content_en && (
+                  <HtmlPreview content={formData.content_en} label="English Preview" />
                 )}
               </div>
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="content_ka">{contentMode === 'html' ? '🇬🇪 HTML (ქართული)' : '🇬🇪 კონტენტი (ქართული)'}</Label>
-                  {contentMode === 'html' && formData.content_ka && (
+                  {formData.content_ka && (
                     <button type="button" onClick={() => setPreviewHtml(previewHtml === 'ka' ? null : 'ka')}
                       className={`text-xs px-2 py-1 rounded flex items-center gap-1 ${previewHtml === 'ka' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}>
-                      <Eye className="w-3 h-3" /> Preview
+                      <Eye className="w-3 h-3" /> {previewHtml === 'ka' ? 'დახურვა' : 'Preview'}
                     </button>
                   )}
                 </div>
                 <Textarea id="content_ka" name="content_ka" value={formData.content_ka} onChange={handleInputChange}
                   rows={contentMode === 'html' ? 12 : 8}
-                  className={contentMode === 'html' ? 'font-mono text-xs bg-slate-900 text-green-400 border-slate-700' : 'font-sans'}
+                  className={contentMode === 'html' ? 'font-mono text-xs bg-slate-900 text-green-400 border-slate-700' : 'font-sans bg-white border-slate-300'}
                   placeholder={contentMode === 'html' ? '<div>\n  <h2>სათაური</h2>\n  <p>ტექსტი...</p>\n</div>' : 'სრული სტატია...'}
                 />
-                {previewHtml === 'ka' && (
-                  <div className="border border-blue-200 rounded-lg p-4 bg-white max-h-[400px] overflow-y-auto">
-                    <p className="text-[10px] text-blue-500 mb-2 uppercase tracking-wider font-bold">HTML Preview</p>
-                    <div dangerouslySetInnerHTML={{ __html: formData.content_ka }} />
-                  </div>
+                {previewHtml === 'ka' && formData.content_ka && (
+                  <HtmlPreview content={formData.content_ka} label="ქართული Preview" />
                 )}
               </div>
             </div>
           </div>
 
           {/* Save/Cancel — onClick, NOT form submit */}
-          <div className="sticky bottom-0 bg-white py-4 border-t border-slate-100 mt-6 z-10 flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
-            <Button type="button" variant="outline" onClick={handleClose} disabled={loading}>
+          <div className="sticky bottom-0 bg-slate-50 py-4 border-t border-slate-200 mt-6 z-10 flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
+            <Button type="button" variant="outline" onClick={handleClose} disabled={loading} className="bg-white text-slate-700 border-slate-300 hover:bg-slate-100">
               გაუქმება
             </Button>
             <Button 

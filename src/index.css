@@ -43,12 +43,26 @@ h1, h2, h3, h4, h5, h6, .heading-font {
     border-color: var(--corporate-yellow);
 }
 
-/* Force dark text in form inputs (body inherits white from design system) */
-input, textarea, select, [contenteditable] {
+/* Force dark text in form inputs and labels (body inherits white from design system) */
+input, textarea, select, label, [contenteditable] {
   color: #0f172a;
 }
 input::placeholder, textarea::placeholder {
   color: #94a3b8;
+}
+
+/* News HTML content — make embeds responsive */
+.news-html-content iframe {
+  max-width: 100%;
+  border-radius: 8px;
+}
+.news-html-content .fb-post,
+.news-html-content .fb-video {
+  max-width: 100% !important;
+}
+.news-html-content .fb-post > span,
+.news-html-content .fb-post iframe {
+  width: 100% !important;
 }
 
 /* Custom Styles for Company Cards */
