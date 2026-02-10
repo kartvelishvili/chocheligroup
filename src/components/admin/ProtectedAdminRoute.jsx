@@ -6,7 +6,7 @@ const ProtectedAdminRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAdminAuth();
 
   if (loading) {
-    return <div className="flex h-screen items-center justify-center">Loading...</div>;
+    return <div className="flex h-screen items-center justify-center bg-slate-100 text-slate-600">Loading...</div>;
   }
 
   if (!isAuthenticated) {
