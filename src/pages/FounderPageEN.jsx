@@ -89,41 +89,43 @@ const FounderPageEN = () => {
       <div className="bg-slate-50 min-h-screen font-sans">
         
         {/* Hero Section */}
-        <section className="relative h-[80vh] w-full overflow-hidden">
-          <div className="absolute inset-0 w-full h-full">
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent z-10" />
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-900/70 via-transparent to-transparent z-10" />
-            <img 
-              src={c?.hero_image_url || "https://s3.ihost.ge/site-chocheligroup-com/founder/506208349-10020878614662192-2846366780113441950-n.jpg"}
-              alt={c?.hero_name_en || "Tsezar Chocheli"}
-              className="w-full h-full object-cover object-center"
-            />
+        <section className="relative min-h-[85vh] w-full overflow-hidden flex items-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+          <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 75% 50%, rgba(30,64,175,0.15), transparent 65%)' }} />
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-corporate-blue to-transparent" />
+          <div className="container mx-auto px-6 relative z-10">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+              <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} className="order-2 lg:order-1">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold mb-8 bg-corporate-blue/15 text-corporate-blue border border-corporate-blue/30">
+                  Founder & Chairman
+                </motion.div>
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 heading-font leading-tight">
+                  {c?.hero_name_en || 'Tsezar Chocheli'}
+                </h1>
+                <div className="h-1.5 w-24 rounded-full mb-8 bg-gradient-to-r from-corporate-yellow to-corporate-yellow/30" />
+                <p className="text-xl md:text-2xl text-white/75 font-light leading-relaxed body-font max-w-xl">
+                  {c?.hero_subtitle_en || '30+ Years of Excellence in Business, Manufacturing & Institutional Leadership'}
+                </p>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="flex items-center gap-8 mt-10">
+                  <div className="text-center"><div className="text-3xl font-bold heading-font text-corporate-yellow">30+</div><div className="text-xs uppercase tracking-wider mt-1 text-white/50">Years</div></div>
+                  <div className="w-px h-10 bg-white/15" />
+                  <div className="text-center"><div className="text-3xl font-bold heading-font text-corporate-yellow">13+</div><div className="text-xs uppercase tracking-wider mt-1 text-white/50">Companies</div></div>
+                  <div className="w-px h-10 bg-white/15" />
+                  <div className="text-center"><div className="text-3xl font-bold heading-font text-corporate-yellow">#1</div><div className="text-xs uppercase tracking-wider mt-1 text-white/50">Retail</div></div>
+                </motion.div>
+              </motion.div>
+              <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.2 }} className="order-1 lg:order-2 flex justify-center">
+                <div className="relative">
+                  <div className="absolute -inset-3 rounded-3xl bg-corporate-blue/30 blur-2xl" />
+                  <div className="relative aspect-[3/4] w-72 md:w-80 lg:w-96 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+                    <img src={c?.hero_image_url || "https://s3.ihost.ge/site-chocheligroup-com/founder/506208349-10020878614662192-2846366780113441950-n.jpg"} alt={c?.hero_name_en || 'Tsezar Chocheli'} className="w-full h-full object-cover object-top" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent" />
+                  </div>
+                </div>
+              </motion.div>
+            </div>
           </div>
-
-          <div className="absolute inset-0 z-20 flex flex-col justify-end pb-32 px-6 md:px-20 container mx-auto">
-            <motion.div 
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1 }}
-              className="max-w-4xl"
-            >
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 drop-shadow-lg">
-                {c?.hero_name_en || 'Tsezar Chocheli'}
-              </h1>
-              <div className="h-1.5 w-32 bg-corporate-yellow rounded-full mb-8" />
-              <p className="text-xl md:text-3xl text-white/95 font-light leading-relaxed max-w-3xl drop-shadow-md">
-                {c?.hero_subtitle_en || '30+ Years of Excellence in Business, Manufacturing & Institutional Leadership'}
-              </p>
-            </motion.div>
-          </div>
-
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5, duration: 1, repeat: Infinity, repeatType: 'reverse' }}
-            className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 text-white"
-          >
-            <ArrowDown className="w-8 h-8 opacity-80" />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 1, repeat: Infinity, repeatType: 'reverse' }} className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 text-white/60">
+            <ArrowDown className="w-7 h-7" />
           </motion.div>
         </section>
 
