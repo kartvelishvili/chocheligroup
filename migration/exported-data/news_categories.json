@@ -1,0 +1,38 @@
+[
+  {
+    "id": "23146c1d-f1f7-42a9-9921-56e36c4d8499",
+    "name_ka": "ტესტ",
+    "name_en": "test",
+    "slug": "test",
+    "created_at": "2026-02-07T09:40:42.866253+00:00",
+    "sort_order": 1,
+    "is_active": true
+  },
+  {
+    "id": "301c2a78-0bab-45c1-bc55-c7509e1a96b1",
+    "name_ka": "ბიზნესი",
+    "name_en": "Business",
+    "slug": "business",
+    "created_at": "2026-02-07T10:40:14.395578+00:00",
+    "sort_order": 1,
+    "is_active": true
+  },
+  {
+    "id": "d844098f-cc91-4358-a358-0b2911a917b3",
+    "name_ka": "ტექნოლოგიები",
+    "name_en": "Technology",
+    "slug": "technology",
+    "created_at": "2026-02-07T10:40:14.395578+00:00",
+    "sort_order": 2,
+    "is_active": true
+  },
+  {
+    "id": "a051d58c-6854-4a9b-be65-d16f6a3a64d1",
+    "name_ka": "ინვესტიციები",
+    "name_en": "Investments",
+    "slug": "investments",
+    "created_at": "2026-02-07T10:40:14.395578+00:00",
+    "sort_order": 3,
+    "is_active": true
+  }
+]

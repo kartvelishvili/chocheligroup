@@ -1,0 +1,72 @@
+[
+  {
+    "id": "7c363270-4598-477a-a547-e5d781e2c20c",
+    "label_ka": "მთავარი",
+    "label_en": "Home",
+    "path": "/",
+    "is_active": true,
+    "sort_order": 10,
+    "created_at": "2026-02-07T09:20:15.831276+00:00",
+    "updated_at": "2026-02-07T09:20:15.831276+00:00"
+  },
+  {
+    "id": "d4cf78dd-ecb7-4ffe-a27e-5df152c59120",
+    "label_ka": "ჩვენ შესახებ",
+    "label_en": "About Us",
+    "path": "/about",
+    "is_active": true,
+    "sort_order": 20,
+    "created_at": "2026-02-07T09:20:15.831276+00:00",
+    "updated_at": "2026-02-07T09:20:15.831276+00:00"
+  },
+  {
+    "id": "14777691-45ee-4f70-981f-726a390247ae",
+    "label_ka": "ისტორია",
+    "label_en": "History",
+    "path": "/portfolio",
+    "is_active": true,
+    "sort_order": 30,
+    "created_at": "2026-02-07T09:20:15.831276+00:00",
+    "updated_at": "2026-02-07T09:20:15.831276+00:00"
+  },
+  {
+    "id": "24faf8c2-f6d2-4ada-9204-96e716402042",
+    "label_ka": "ბრენდები",
+    "label_en": "Brands",
+    "path": "/industries",
+    "is_active": true,
+    "sort_order": 40,
+    "created_at": "2026-02-07T09:20:15.831276+00:00",
+    "updated_at": "2026-02-07T09:20:15.831276+00:00"
+  },
+  {
+    "id": "e1b38068-5c81-4a75-af8e-6fdad8160c02",
+    "label_ka": "პროექტები",
+    "label_en": "Projects",
+    "path": "/projects",
+    "is_active": true,
+    "sort_order": 50,
+    "created_at": "2026-02-07T09:20:15.831276+00:00",
+    "updated_at": "2026-02-07T09:20:15.831276+00:00"
+  },
+  {
+    "id": "5342a342-e0c5-42d6-bc3e-103071035c9b",
+    "label_ka": "სიახლეები",
+    "label_en": "News",
+    "path": "/news",
+    "is_active": true,
+    "sort_order": 60,
+    "created_at": "2026-02-07T09:20:15.831276+00:00",
+    "updated_at": "2026-02-07T09:20:15.831276+00:00"
+  },
+  {
+    "id": "aebeaa33-3dd5-464f-9cd1-c3c21f15357e",
+    "label_ka": "კონტაქტი",
+    "label_en": "Contact",
+    "path": "/contact",
+    "is_active": true,
+    "sort_order": 70,
+    "created_at": "2026-02-07T09:20:15.831276+00:00",
+    "updated_at": "2026-02-07T09:20:15.831276+00:00"
+  }
+]

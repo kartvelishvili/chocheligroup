@@ -1,0 +1,570 @@
+
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { newsApi, uploadApi } from '@/lib/apiClient';
+import { useToast } from '@/components/ui/use-toast';
+import { Loader2, X, FileImage as ImageIcon, Save, Code, Type, Eye, AlertCircle, CheckCircle } from 'lucide-react';
+
+/* ─── Sandboxed HTML Preview (renders scripts like FB SDK inside iframe) ─── */
+const HtmlPreview = ({ content, label }) => {
+  const iframeRef = useRef(null);
+  const [iframeHeight, setIframeHeight] = useState(200);
+
+  const writeToIframe = useCallback(() => {
+    const iframe = iframeRef.current;
+    if (!iframe || !content) return;
+
+    const doc = iframe.contentDocument || iframe.contentWindow?.document;
+    if (!doc) return;
+
+    const htmlDoc = `<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1e293b; padding: 16px; line-height: 1.6; font-size: 15px; background: #fff; }
+  img, video, iframe { max-width: 100%; height: auto; border-radius: 8px; }
+  h1,h2,h3,h4,h5,h6 { margin: 0.8em 0 0.4em; font-weight: 700; }
+  p { margin: 0.5em 0; }
+  a { color: #2563eb; }
+  .fb-post, .fb-video { max-width: 100% !important; }
+  .fb-post > span, .fb-post iframe { width: 100% !important; }
+</style>
+</head><body>
+${content}
+<script>
+  // Auto-resize iframe to content height
+  function notifyHeight() {
+    window.parent.postMessage({ type: 'iframe-height', height: document.body.scrollHeight + 40 }, '*');
+  }
+  new MutationObserver(notifyHeight).observe(document.body, { childList: true, subtree: true, attributes: true });
+  window.addEventListener('load', () => setTimeout(notifyHeight, 500));
+  setTimeout(notifyHeight, 100);
+  setTimeout(notifyHeight, 1000);
+  setTimeout(notifyHeight, 3000);
+</script>
+</body></html>`;
+
+    doc.open();
+    doc.write(htmlDoc);
+    doc.close();
+  }, [content]);
+
+  useEffect(() => {
+    const handleMessage = (e) => {
+      if (e.data?.type === 'iframe-height' && typeof e.data.height === 'number') {
+        setIframeHeight(Math.min(Math.max(e.data.height, 100), 600));
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  useEffect(() => {
+    // Small delay to ensure iframe is mounted
+    const timer = setTimeout(writeToIframe, 50);
+    return () => clearTimeout(timer);
+  }, [writeToIframe]);
+
+  return (
+    <div className="border border-blue-200 rounded-lg overflow-hidden bg-white">
+      <div className="flex items-center justify-between px-3 py-1.5 bg-blue-50 border-b border-blue-100">
+        <p className="text-[10px] text-blue-600 uppercase tracking-wider font-bold">{label || 'HTML Preview'}</p>
+        <span className="text-[9px] text-blue-400">sandbox iframe</span>
+      </div>
+      <iframe
+        ref={iframeRef}
+        title="preview"
+        sandbox="allow-scripts allow-same-origin allow-popups"
+        className="w-full border-0"
+        style={{ height: `${iframeHeight}px`, minHeight: '100px' }}
+      />
+    </div>
+  );
+};
+
+const NewsForm = ({ isOpen, onClose, newsItem, onSuccess, categories }) => {
+  const { toast } = useToast();
+  
+  const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState('');
+  
+  const [contentMode, setContentMode] = useState('text');
+  const [previewHtml, setPreviewHtml] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
+  const [formStatus, setFormStatus] = useState(null);
+
+  const [formData, setFormData] = useState({
+    title_ka: '',
+    title_en: '',
+    excerpt_ka: '',
+    excerpt_en: '',
+    content_ka: '',
+    content_en: '',
+    slug: '',
+    status: 'draft',
+    category_id: '',
+    image_url: '',
+    image_path: ''
+  });
+
+  useEffect(() => {
+    if (isOpen) {
+      if (newsItem) {
+        setFormData({
+          title_ka: newsItem.title_ka || '',
+          title_en: newsItem.title_en || '',
+          excerpt_ka: newsItem.excerpt_ka || '',
+          excerpt_en: newsItem.excerpt_en || '',
+          content_ka: newsItem.content_ka || '',
+          content_en: newsItem.content_en || '',
+          slug: newsItem.slug || '',
+          status: newsItem.published ? 'published' : 'draft',
+          category_id: newsItem.category_id || '',
+          image_url: newsItem.image_url || '',
+          image_path: newsItem.image_path || ''
+        });
+        setPreviewUrl(newsItem.image_url || '');
+        const hasHtml = /<[a-z][\s\S]*>/i.test(newsItem.content_en || '') || /<[a-z][\s\S]*>/i.test(newsItem.content_ka || '');
+        setContentMode(hasHtml ? 'html' : 'text');
+      } else {
+        setFormData({
+          title_ka: '', title_en: '', excerpt_ka: '', excerpt_en: '',
+          content_ka: '', content_en: '', slug: '', status: 'draft',
+          category_id: '', image_url: '', image_path: ''
+        });
+        setPreviewUrl('');
+        setContentMode('text');
+      }
+      setImageFile(null);
+      setUploading(false);
+      setLoading(false);
+      setPreviewHtml(null);
+      setFormErrors({});
+      setFormStatus(null);
+    }
+  }, [isOpen, newsItem]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (formErrors[name]) setFormErrors(prev => ({ ...prev, [name]: null }));
+    if (formStatus) setFormStatus(null);
+    
+    setFormData(prev => {
+      const newData = { ...prev, [name]: value };
+      if (name === 'title_en' && !newsItem) {
+        newData.slug = value.toLowerCase()
+          .replace(/[^\w\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/^-+|-+$/g, '');
+      }
+      return newData;
+    });
+  };
+
+  const handleImageSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast({ title: "Invalid File", description: "Please select an image file.", variant: "destructive" });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: "File Too Large", description: "Max 5MB.", variant: "destructive" });
+      return;
+    }
+    setImageFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setPreviewUrl('');
+    setFormData(prev => ({ ...prev, image_url: '', image_path: '' }));
+  };
+
+  const deleteOldImage = async (oldImagePath) => {
+    if (!oldImagePath) return;
+    try {
+      await uploadApi.deleteByPath(oldImagePath);
+      console.log('[NewsForm] Old image deleted:', oldImagePath);
+    } catch (err) {
+      console.warn('Error deleting old image:', err);
+    }
+  };
+
+  const uploadImage = async () => {
+    if (!imageFile) return null;
+    try {
+      setUploading(true);
+      console.log('[NewsForm] Starting image upload...');
+      const result = await uploadApi.upload('news-images', imageFile);
+      console.log('[NewsForm] Image uploaded successfully:', result.url);
+      return { image_url: result.url, image_path: result.path };
+    } catch (error) {
+      console.error('Image upload failed:', error);
+      toast({
+        title: "სურათის ატვირთვა ვერ მოხერხდა",
+        description: error.message || 'Upload failed. Check storage bucket settings.',
+        variant: "destructive"
+      });
+      throw error;
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.title_en?.trim()) errors.title_en = 'სავალდებულოა';
+    if (!formData.title_ka?.trim()) errors.title_ka = 'სავალდებულოა';
+    if (!formData.slug?.trim()) errors.slug = 'სავალდებულოა';
+    if (!formData.category_id) errors.category_id = 'აირჩიეთ კატეგორია';
+    if (!formData.excerpt_en?.trim()) errors.excerpt_en = 'სავალდებულოა';
+    if (!formData.excerpt_ka?.trim()) errors.excerpt_ka = 'სავალდებულოა';
+
+    setFormErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      setFormStatus({ type: 'error', message: 'გთხოვთ შეავსოთ ყველა სავალდებულო ველი (*)' });
+      return false;
+    }
+    setFormStatus(null);
+    return true;
+  };
+
+  // ===== MAIN SAVE (onClick — NOT form onSubmit) =====
+  const handleSave = async () => {
+    console.log('[NewsForm] handleSave triggered');
+    
+    if (loading) return;
+    setFormStatus(null);
+    if (!validateForm()) return;
+
+    setLoading(true);
+
+    try {
+      let imageData = {
+        image_url: formData.image_url || null,
+        image_path: formData.image_path || null
+      };
+
+      if (imageFile) {
+        try {
+          const uploadResult = await uploadImage();
+          if (uploadResult) {
+            // Delete old image from storage when replacing
+            if (newsItem?.image_path && newsItem.image_path !== imageData.image_path) {
+              await deleteOldImage(newsItem.image_path);
+            }
+            imageData = uploadResult;
+          }
+        } catch (uploadErr) {
+          // Upload failed — toast already shown, stop save
+          setFormStatus({ type: 'error', message: 'სურათის ატვირთვა ვერ მოხერხდა. სცადეთ თავიდან.' });
+          setLoading(false);
+          return;
+        }
+      }
+
+      const payload = {
+        title_ka: formData.title_ka?.trim() || '',
+        title_en: formData.title_en?.trim() || '',
+        excerpt_ka: formData.excerpt_ka?.trim() || '',
+        excerpt_en: formData.excerpt_en?.trim() || '',
+        content_ka: formData.content_ka || '',
+        content_en: formData.content_en || '',
+        slug: formData.slug?.trim().toLowerCase().replace(/\s+/g, '-') || '',
+        category_id: formData.category_id && formData.category_id.trim() !== '' ? formData.category_id : null,
+        published: formData.status === 'published',
+        image_url: imageData.image_url || null,
+        image_path: imageData.image_path || null,
+        updated_at: new Date().toISOString()
+      };
+
+      console.log('[NewsForm] Payload:', JSON.stringify(payload, null, 2));
+
+      let response;
+      if (newsItem?.id) {
+        console.log('[NewsForm] UPDATE id:', newsItem.id);
+        try {
+          response = await newsApi.update(newsItem.id, payload);
+        } catch (err) {
+          if (err.message?.includes('23505')) {
+            setFormStatus({ type: 'error', message: 'ეს slug უკვე არსებობს — შეცვალეთ slug ველი' });
+            setFormErrors(prev => ({ ...prev, slug: 'უკვე გამოყენებულია' }));
+          } else {
+            setFormStatus({ type: 'error', message: err.message });
+          }
+          console.error('[NewsForm] DB Error:', err);
+          return;
+        }
+      } else {
+        console.log('[NewsForm] INSERT');
+        try {
+          response = await newsApi.create(payload);
+        } catch (err) {
+          if (err.message?.includes('23505')) {
+            setFormStatus({ type: 'error', message: 'ეს slug უკვე არსებობს — შეცვალეთ slug ველი' });
+            setFormErrors(prev => ({ ...prev, slug: 'უკვე გამოყენებულია' }));
+          } else if (err.message?.includes('22P02')) {
+            setFormStatus({ type: 'error', message: 'არასწორი მონაცემი (კატეგორია)' });
+          } else {
+            setFormStatus({ type: 'error', message: err.message });
+          }
+          console.error('[NewsForm] DB Error:', err);
+          return;
+        }
+      }
+
+      console.log('[NewsForm] SUCCESS!');
+      setFormStatus({ type: 'success', message: newsItem ? 'სტატია განახლდა!' : 'სტატია წარმატებით დაემატა!' });
+      
+      toast({
+        title: newsItem ? "სტატია განახლდა" : "სტატია დაემატა",
+        description: newsItem ? "Article updated" : "Article created",
+        className: "bg-green-600 text-white border-green-700"
+      });
+
+      setTimeout(() => {
+        if (onSuccess) onSuccess();
+        onClose();
+      }, 600);
+
+    } catch (error) {
+      console.error('[NewsForm] Error:', error);
+      setFormStatus({ type: 'error', message: error.message || 'Unexpected error' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClose = () => {
+    if (!loading) onClose();
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) handleClose(); }}>
+      <DialogContent 
+        className="max-w-4xl w-full max-h-[95vh] overflow-y-auto bg-slate-50 text-slate-900 p-6 border border-slate-200"
+        onPointerDownOutside={(e) => e.preventDefault()}
+        onInteractOutside={(e) => e.preventDefault()}
+        onEscapeKeyDown={(e) => { if (loading) e.preventDefault(); }}
+      >
+        <DialogHeader>
+          <DialogTitle className="text-xl font-bold text-slate-900">{newsItem ? 'სტატიის რედაქტირება' : 'ახალი სტატია'}</DialogTitle>
+          <DialogDescription className="text-slate-500">
+            {newsItem ? 'შეცვალეთ არსებული სტატიის დეტალები.' : 'შექმენით ახალი სიახლე.'}
+          </DialogDescription>
+        </DialogHeader>
+        
+        <div className="space-y-6 mt-4">
+          
+          {formStatus && (
+            <div className={`flex items-center gap-3 p-4 rounded-lg border text-sm font-medium ${
+              formStatus.type === 'error' 
+                ? 'bg-red-50 border-red-300 text-red-700' 
+                : 'bg-green-50 border-green-300 text-green-700'
+            }`}>
+              {formStatus.type === 'error' ? <AlertCircle className="w-5 h-5 shrink-0" /> : <CheckCircle className="w-5 h-5 shrink-0" />}
+              <span className="flex-1">{formStatus.message}</span>
+              <button type="button" onClick={() => setFormStatus(null)} className="p-1 rounded hover:bg-black/10">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+               <div className="space-y-1.5">
+                 <Label htmlFor="title_en">Title (English) *</Label>
+                 <Input id="title_en" name="title_en" value={formData.title_en} onChange={handleInputChange} placeholder="Article Title" className={`bg-white border-slate-300 ${formErrors.title_en ? 'border-red-400 ring-1 ring-red-400' : ''}`} />
+                 {formErrors.title_en && <p className="text-xs text-red-500">{formErrors.title_en}</p>}
+               </div>
+               <div className="space-y-1.5">
+                 <Label htmlFor="title_ka">სათაური (ქართული) *</Label>
+                 <Input id="title_ka" name="title_ka" value={formData.title_ka} onChange={handleInputChange} placeholder="სტატიის სათაური" className={`bg-white border-slate-300 ${formErrors.title_ka ? 'border-red-400 ring-1 ring-red-400' : ''}`} />
+                 {formErrors.title_ka && <p className="text-xs text-red-500">{formErrors.title_ka}</p>}
+               </div>
+               <div className="space-y-1.5">
+                 <Label htmlFor="slug">Slug *</Label>
+                 <Input id="slug" name="slug" value={formData.slug} onChange={handleInputChange} placeholder="article-slug" className={`font-mono text-sm bg-white border-slate-300 ${formErrors.slug ? 'border-red-400 ring-1 ring-red-400' : ''}`} />
+                 {formErrors.slug && <p className="text-xs text-red-500">{formErrors.slug}</p>}
+               </div>
+
+               <div className="grid grid-cols-2 gap-4">
+                 <div className="space-y-1.5">
+                   <Label>კატეგორია *</Label>
+                   <Select 
+                     value={formData.category_id} 
+                     onValueChange={(v) => { 
+                       setFormData(p => ({...p, category_id: v})); 
+                       setFormErrors(prev => ({...prev, category_id: null}));
+                       if (formStatus) setFormStatus(null);
+                     }}
+                   >
+                     <SelectTrigger className={`bg-white border-slate-300 ${formErrors.category_id ? 'border-red-400 ring-1 ring-red-400' : ''}`}>
+                       <SelectValue placeholder="აირჩიეთ..." />
+                     </SelectTrigger>
+                     <SelectContent className="z-[9999] bg-white">
+                       {categories.map(c => (
+                         <SelectItem key={c.id} value={c.id}>{c.name_en} / {c.name_ka}</SelectItem>
+                       ))}
+                     </SelectContent>
+                   </Select>
+                   {formErrors.category_id && <p className="text-xs text-red-500">{formErrors.category_id}</p>}
+                 </div>
+                 <div className="space-y-1.5">
+                   <Label>სტატუსი</Label>
+                   <Select value={formData.status} onValueChange={(v) => setFormData(p => ({...p, status: v}))}>
+                     <SelectTrigger className="bg-white border-slate-300"><SelectValue /></SelectTrigger>
+                     <SelectContent className="z-[9999] bg-white">
+                       <SelectItem value="draft">დრაფტი</SelectItem>
+                       <SelectItem value="published">გამოქვეყნებული</SelectItem>
+                     </SelectContent>
+                   </Select>
+                 </div>
+               </div>
+            </div>
+
+            <div className="space-y-4">
+              <Label>სურათი</Label>
+              <div className="border-2 border-dashed border-slate-200 rounded-xl min-h-[220px] flex flex-col items-center justify-center p-4 relative group hover:border-blue-400 transition-colors bg-slate-50">
+                 {uploading ? (
+                   <div className="flex flex-col items-center gap-2">
+                     <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+                     <span className="text-sm text-slate-500">იტვირთება...</span>
+                   </div>
+                 ) : previewUrl ? (
+                   <>
+                     <img src={previewUrl} alt="Preview" className="w-full h-48 object-cover rounded-lg shadow-sm" />
+                     <button type="button" onClick={handleRemoveImage} className="absolute top-2 right-2 bg-white p-2 rounded-full text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors shadow-sm border border-slate-200">
+                       <X size={16} />
+                     </button>
+                   </>
+                 ) : (
+                   <label className="cursor-pointer flex flex-col items-center w-full h-full justify-center p-6">
+                     <ImageIcon size={32} className="text-slate-300 mb-2 group-hover:text-blue-400 transition-colors" />
+                     <span className="text-sm font-medium text-slate-600">სურათის ატვირთვა</span>
+                     <span className="text-xs text-slate-400 mt-1">Max 5MB (JPG, PNG, WebP)</span>
+                     <input type="file" className="hidden" accept="image/*" onChange={handleImageSelect} />
+                   </label>
+                 )}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+             <div className="space-y-1.5">
+               <Label htmlFor="excerpt_en">Excerpt (English) *</Label>
+               <Textarea id="excerpt_en" name="excerpt_en" value={formData.excerpt_en} onChange={handleInputChange} rows={3} placeholder="Short summary..." className={`bg-white border-slate-300 ${formErrors.excerpt_en ? 'border-red-400 ring-1 ring-red-400' : ''}`} />
+               {formErrors.excerpt_en && <p className="text-xs text-red-500">{formErrors.excerpt_en}</p>}
+             </div>
+             <div className="space-y-1.5">
+               <Label htmlFor="excerpt_ka">აღწერა (ქართული) *</Label>
+               <Textarea id="excerpt_ka" name="excerpt_ka" value={formData.excerpt_ka} onChange={handleInputChange} rows={3} placeholder="მოკლე აღწერა..." className={`bg-white border-slate-300 ${formErrors.excerpt_ka ? 'border-red-400 ring-1 ring-red-400' : ''}`} />
+               {formErrors.excerpt_ka && <p className="text-xs text-red-500">{formErrors.excerpt_ka}</p>}
+             </div>
+          </div>
+
+          <div className="border border-slate-200 rounded-xl overflow-hidden">
+            <div className="flex items-center justify-between p-3 bg-slate-50 border-b">
+              <Label className="font-bold text-slate-700">კონტენტი / Content</Label>
+              <div className="flex gap-1 bg-slate-200 p-0.5 rounded-lg">
+                <button type="button" onClick={() => { setContentMode('text'); setPreviewHtml(null); }}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5 transition-all ${contentMode === 'text' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+                  <Type className="w-3.5 h-3.5" /> ტექსტი
+                </button>
+                <button type="button" onClick={() => { setContentMode('html'); setPreviewHtml(null); }}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium flex items-center gap-1.5 transition-all ${contentMode === 'html' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
+                  <Code className="w-3.5 h-3.5" /> HTML
+                </button>
+              </div>
+            </div>
+            <div className="p-4 space-y-4">
+              {contentMode === 'html' && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-700">
+                  💡 HTML რეჟიმში შეგიძლიათ ჩასვათ სრული HTML კოდი.
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="content_en">{contentMode === 'html' ? '🇬🇧 HTML (English)' : '🇬🇧 Content (English)'}</Label>
+                  {formData.content_en && (
+                    <button type="button" onClick={() => setPreviewHtml(previewHtml === 'en' ? null : 'en')}
+                      className={`text-xs px-2 py-1 rounded flex items-center gap-1 ${previewHtml === 'en' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}>
+                      <Eye className="w-3 h-3" /> {previewHtml === 'en' ? 'დახურვა' : 'Preview'}
+                    </button>
+                  )}
+                </div>
+                <Textarea id="content_en" name="content_en" value={formData.content_en} onChange={handleInputChange}
+                  rows={contentMode === 'html' ? 12 : 8}
+                  className={contentMode === 'html' ? 'font-mono text-xs bg-slate-900 text-green-400 border-slate-700' : 'font-sans bg-white border-slate-300'}
+                  placeholder={contentMode === 'html' ? '<div>\n  <h2>Title</h2>\n  <p>Content...</p>\n</div>' : 'Full article content...'}
+                />
+                {previewHtml === 'en' && formData.content_en && (
+                  <HtmlPreview content={formData.content_en} label="English Preview" />
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="content_ka">{contentMode === 'html' ? '🇬🇪 HTML (ქართული)' : '🇬🇪 კონტენტი (ქართული)'}</Label>
+                  {formData.content_ka && (
+                    <button type="button" onClick={() => setPreviewHtml(previewHtml === 'ka' ? null : 'ka')}
+                      className={`text-xs px-2 py-1 rounded flex items-center gap-1 ${previewHtml === 'ka' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}>
+                      <Eye className="w-3 h-3" /> {previewHtml === 'ka' ? 'დახურვა' : 'Preview'}
+                    </button>
+                  )}
+                </div>
+                <Textarea id="content_ka" name="content_ka" value={formData.content_ka} onChange={handleInputChange}
+                  rows={contentMode === 'html' ? 12 : 8}
+                  className={contentMode === 'html' ? 'font-mono text-xs bg-slate-900 text-green-400 border-slate-700' : 'font-sans bg-white border-slate-300'}
+                  placeholder={contentMode === 'html' ? '<div>\n  <h2>სათაური</h2>\n  <p>ტექსტი...</p>\n</div>' : 'სრული სტატია...'}
+                />
+                {previewHtml === 'ka' && formData.content_ka && (
+                  <HtmlPreview content={formData.content_ka} label="ქართული Preview" />
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Save/Cancel — onClick, NOT form submit */}
+          <div className="sticky bottom-0 bg-slate-50 py-4 border-t border-slate-200 mt-6 z-10 flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
+            <Button type="button" variant="outline" onClick={handleClose} disabled={loading} className="bg-white text-slate-700 border-slate-300 hover:bg-slate-100">
+              გაუქმება
+            </Button>
+            <Button 
+              type="button" 
+              onClick={handleSave} 
+              disabled={loading} 
+              className="bg-blue-600 hover:bg-blue-700 text-white min-w-[140px]"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  {uploading ? 'იტვირთება...' : 'ინახება...'}
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4 mr-2" />
+                  შენახვა
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default NewsForm;

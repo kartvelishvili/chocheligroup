@@ -1,0 +1,527 @@
+[
+  {
+    "id": "5c086c9d-48e6-478a-aed7-7d286252b11b",
+    "section_key": "hero_section",
+    "title": "Hero Section",
+    "content": {
+      "badge_en": "30+ Years of Excellence",
+      "badge_ka": "30+ წლიანი გამოცდილება",
+      "subtitle_en": "A premier Georgian family-owned investment group with a proven track record in manufacturing, retail, and distribution.",
+      "subtitle_ka": "წამყვანი ქართული საოჯახო საინვესტიციო ჯგუფი დადასტურებული ისტორიით წარმოებაში, ვაჭრობასა და დისტრიბუციაში.",
+      "hero_image_url": "https://i.postimg.cc/Z5xzM8Sj/chocheli-group.jpg",
+      "title_line1_en": "Building",
+      "title_line1_ka": "ისტორიის",
+      "title_line2_en": "History.",
+      "title_line2_ka": "მშენებლობა",
+      "title_line3_en": "Created at Scale.",
+      "title_line3_ka": "მასშტაბური ხედვით"
+    },
+    "created_at": "2026-02-08T20:25:32.902367+00:00",
+    "updated_at": "2026-02-08T20:25:32.902367+00:00"
+  },
+  {
+    "id": "fdc9f3f2-2999-4ca9-ace7-8b94f34105ca",
+    "section_key": "group_stats",
+    "title": "Group Stats",
+    "content": {
+      "stats": [
+        {
+          "number": "30+",
+          "label_en": "Years of Experience",
+          "label_ka": "წლიანი გამოცდილება"
+        },
+        {
+          "number": "13",
+          "label_en": "Companies in Portfolio",
+          "label_ka": "კომპანია პორტფოლიოში"
+        },
+        {
+          "number": "#1",
+          "label_en": "Retail Leader in Georgia",
+          "label_ka": "რითეილის ლიდერი საქართველოში"
+        },
+        {
+          "icon": "Map",
+          "number": "",
+          "label_en": "Diverse Industries",
+          "label_ka": "მრავალფეროვანი ინდუსტრიები"
+        },
+        {
+          "icon": "Globe2",
+          "number": "",
+          "label_en": "Global Partnerships",
+          "label_ka": "გლობალური პარტნიორობა"
+        }
+      ]
+    },
+    "created_at": "2026-02-08T20:25:32.902367+00:00",
+    "updated_at": "2026-02-08T20:25:32.902367+00:00"
+  },
+  {
+    "id": "ba3ff166-986f-4d3f-9ecb-2582c9ef5589",
+    "section_key": "execution_dna",
+    "title": "Execution DNA",
+    "content": {
+      "capabilities": [
+        {
+          "icon": "Factory",
+          "title_en": "Greenfield Build-Outs",
+          "title_ka": "ახალი საწარმოების აშენება",
+          "description_en": "Factory & logistics infrastructure from ground up",
+          "description_ka": "საწარმოო და ლოგისტიკური ინფრასტრუქტურა ნულიდან"
+        },
+        {
+          "icon": "TrendingUp",
+          "title_en": "Nationwide Rollout",
+          "title_ka": "ქვეყნის მასშტაბით გაფართოება",
+          "description_en": "Proven capability to scale operations nationally",
+          "description_ka": "დადასტურებული შესაძლებლობა ოპერაციების მასშტაბირებისთვის"
+        },
+        {
+          "icon": "Award",
+          "title_en": "Global Competition",
+          "title_ka": "გლობალური კონკურენცია",
+          "description_en": "Successfully competing with international incumbents",
+          "description_ka": "წარმატებული კონკურენცია საერთაშორისო ლიდერებთან"
+        },
+        {
+          "icon": "Shield",
+          "title_en": "Brand Control",
+          "title_ka": "ბრენდის კონტროლი",
+          "description_en": "Building and maintaining customer trust & brand equity",
+          "description_ka": "მომხმარებელთა ნდობისა და ბრენდის აშენება"
+        },
+        {
+          "icon": "Handshake",
+          "title_en": "30+ Years of Partnerships",
+          "title_ka": "30+ წლიანი პარტნიორობა",
+          "description_en": "Long-standing relationships with international brands",
+          "description_ka": "ხანგრძლივი ურთიერთობები საერთაშორისო ბრენდებთან"
+        },
+        {
+          "icon": "Zap",
+          "title_en": "Operational Excellence",
+          "title_ka": "ოპერაციული ბრწყინვალება",
+          "description_en": "Strong governance & stakeholder alignment",
+          "description_ka": "ძლიერი მართვა და დაინტერესებულ მხარეთა თანხმობა"
+        }
+      ],
+      "section_title_en": "Core Execution Principles",
+      "section_title_ka": "შესრულების ძირითადი პრინციპები"
+    },
+    "created_at": "2026-02-08T20:25:32.902367+00:00",
+    "updated_at": "2026-02-08T20:25:32.902367+00:00"
+  },
+  {
+    "id": "6efecf82-be12-4791-a35a-bbbf9c433cd5",
+    "section_key": "leadership",
+    "title": "Leadership",
+    "content": {
+      "members": [
+        {
+          "bio_en": "The visionary founder behind Chocheli Invest Group. With over three decades of business leadership, Shalva has been instrumental in shaping Georgia's manufacturing and retail sectors. His strategic foresight transformed a single brewery into one of the country's largest diversified holding companies.",
+          "bio_ka": "ჩოჩელი ინვესტ გრუპის ვიზიონერი დამფუძნებელი. 30 წელზე მეტი ბიზნეს ლიდერობის გამოცდილებით, შალვამ გადამწყვეტი როლი ითამაშა საქართველოს წარმოებისა და საცალო ვაჭრობის სექტორების ჩამოყალიბებაში. მისმა სტრატეგიულმა ხედვამ ერთი ლუდსახარში ქვეყნის ერთ-ერთ უდიდეს დივერსიფიცირებულ ჰოლდინგად აქცია.",
+          "name_en": "Shalva Chocheli",
+          "name_ka": "შალვა ჩოჩელი",
+          "role_en": "Founder & Chairman",
+          "role_ka": "დამფუძნებელი და თავმჯდომარე",
+          "image_url": "https://i.postimg.cc/Y0kskbBq/shalva-chocheli-1.png"
+        },
+        {
+          "bio_en": "Saba Chocheli is a finance and investment professional with an academic background from the University of Amsterdam, where he specialized in International Finance and Trade. He combines strong quantitative expertise with practical experience across global asset management, audit, and commercial operations.\n\nHe previously worked at Palladyne International Asset Management in Amsterdam as a Research Analyst, contributing to fixed income strategy, market monitoring across the US, Europe, and Asia, and the development of systematic portfolio construction models. His work included financial modeling, backtesting, and the transition of investment frameworks from Excel-based environments into Python-driven automation.\n\nEarlier in his career, Saba gained experience at PricewaterhouseCoopers in audit and risk evaluation, as well as in sales and distribution strategy within Georgian Beer Company, where he supported efficiency and market analysis initiatives.\n\nSaba focuses on strengthening investment discipline, data-driven decision-making, and implementing international best practices to support sustainable long-term growth.",
+          "bio_ka": "საბა ჩოჩელი არის ფინანსებისა და ინვესტიციების სფეროს პროფესიონალი, რომელმაც განათლება მიიღო ამსტერდამის უნივერსიტეტში საერთაშორისო ფინანსებისა და ვაჭრობის მიმართულებით. იგი აერთიანებს ძლიერ რაოდენობრივ ექსპერტიზას გლობალურ აქტივების მართვაში, აუდიტსა და კომერციულ ოპერაციებში მიღებულ პრაქტიკულ გამოცდილებასთან.\n\nმან იმუშავა ამსტერდამში მდებარე Palladyne International Asset Management-ში კვლევის ანალიტიკოსის პოზიციაზე, სადაც მონაწილეობდა ფიქსირებული შემოსავლის სტრატეგიის განვითარებაში, აშშ-ის, ევროპის და აზიის ბაზრების მონიტორინგში და პორტფელების სისტემური კონსტრუქციის მოდელების შექმნაში. მისი საქმიანობა მოიცავდა ფინანსურ მოდელირებას, ისტორიული ტესტირების ჩატარებას (backtesting) და საინვესტიციო პროცესების Excel-ზე დაფუძნებული გარემოდან Python-ზე ავტომატიზაციას.\n\nკარიერის ადრეულ ეტაპზე საბამ გამოცდილება მიიღო PricewaterhouseCoopers-ში აუდიტისა და რისკების შეფასების მიმართულებით, ასევე Georgian Beer Company-ში, სადაც ჩართული იყო გაყიდვების, დისტრიბუციის ეფექტიანობისა და ბაზრის ანალიზის პროექტებში.\n\nსაბას პროფესიული ფოკუსია საინვესტიციო დისციპლინის გაძლიერება, მონაცემებზე დაფუძნებული გადაწყვეტილებების მიღება და საერთაშორისო საუკეთესო პრაქტიკის დანერგვა, რაც უზრუნველყოფს გრძელვადიან და მდგრად ზრდას.",
+          "name_en": "Saba Chocheli",
+          "name_ka": "საბა ჩოჩელი",
+          "role_en": "Managing Partner",
+          "role_ka": "მმართველი პარტნიორი",
+          "image_url": "https://i.postimg.cc/5N6GBNpc/saba-chocheli.jpg"
+        }
+      ],
+      "section_title_en": "Leadership",
+      "section_title_ka": "ხელმძღვანელობა"
+    },
+    "created_at": "2026-02-08T20:25:32.902367+00:00",
+    "updated_at": "2026-02-17T10:50:24.012+00:00"
+  },
+  {
+    "id": "85c98994-e3d7-4fee-84e6-925715e1c026",
+    "section_key": "careers_page",
+    "title": "Careers Page",
+    "content": {
+      "vacancies": [
+        {
+          "id": 1,
+          "type": "Full-time",
+          "title": "Senior Financial Analyst",
+          "company": "Group HQ",
+          "location": "Tbilisi"
+        },
+        {
+          "id": 2,
+          "type": "Full-time",
+          "title": "Sales Manager",
+          "company": "Natakhtari",
+          "location": "Mtskheta"
+        },
+        {
+          "id": 3,
+          "type": "Shift",
+          "title": "Logistics Coordinator",
+          "company": "Berta",
+          "location": "Tbilisi"
+        },
+        {
+          "id": 4,
+          "type": "Full-time",
+          "title": "Marketing Specialist",
+          "company": "Barambo",
+          "location": "Natakhtari"
+        }
+      ],
+      "page_title_en": "Careers",
+      "page_title_ka": "კარიერა",
+      "vacancies_title_en": "Open Vacancies",
+      "vacancies_title_ka": "ღია ვაკანსიები"
+    },
+    "created_at": "2026-02-08T20:25:32.902367+00:00",
+    "updated_at": "2026-02-08T20:25:32.902367+00:00"
+  },
+  {
+    "id": "61a221d3-31c2-4abd-90c6-8857867f2c5e",
+    "section_key": "projects",
+    "title": "Projects",
+    "content": {
+      "items": [
+        {
+          "id": "gabala-factory",
+          "images": [
+            "https://i.postimg.cc/FFbXMWZV/gabala1.png",
+            "https://i.postimg.cc/yxK4JcVb/gabala2.png",
+            "https://i.postimg.cc/5ymc8yyt/gabala3.png"
+          ],
+          "status": "ongoing",
+          "title_en": "Gabala Factory Construction",
+          "title_ka": "გაბალას ქარხნის მშენებლობა",
+          "location_en": "Gabala, Azerbaijan",
+          "location_ka": "გაბალა, აზერბაიჯანი",
+          "description_en": "State-of-the-art beverage factory construction project in Gabala, Azerbaijan, featuring advanced industrial infrastructure and sustainable manufacturing capabilities.",
+          "description_ka": "უახლესი სტანდარტების სასმელების ქარხნის მშენებლობის პროექტი გაბალაში, აზერბაიჯანი."
+        },
+        {
+          "id": "kakheti-45a",
+          "images": [
+            "https://i.postimg.cc/1Xkj63nR/IMG-7536.jpg"
+          ],
+          "status": "ongoing",
+          "title_en": "Kakhetis Gatkvecili 45a - Auto Salon",
+          "title_ka": "კახეთის გზატკეცილი 45ა - ავტოსალონი",
+          "location_en": "Tbilisi, Georgia",
+          "location_ka": "თბილისი, საქართველო",
+          "description_en": "Modern auto salon construction featuring premium showroom space, high-tech service areas, and contemporary architectural design.",
+          "description_ka": "თანამედროვე ავტოსალონის მშენებლობა პრემიუმ საგამოფენო სივრცით."
+        },
+        {
+          "id": "agmashenebeli-kheivani",
+          "images": [
+            "https://i.postimg.cc/RZtxF2Yn/digomi.jpg"
+          ],
+          "status": "ongoing",
+          "title_en": "Agmashenebeli Alley - Office Space",
+          "title_ka": "აღმაშენებლის ხეივანი - საოფისე სივრცე",
+          "location_en": "Tbilisi, Georgia",
+          "location_ka": "თბილისი, საქართველო",
+          "description_en": "Development of a multi-functional office complex designed to international business standards.",
+          "description_ka": "მრავალფუნქციური საოფისე კომპლექსის განვითარება საერთაშორისო ბიზნეს სტანდარტების შესაბამისად."
+        }
+      ],
+      "hero_title_en": "Building the Future",
+      "hero_title_ka": "მომავლის მშენებლობა",
+      "hero_subtitle_en": "From industrial complexes to modern commercial spaces, our projects reflect our commitment to innovation, quality, and sustainable development across the region.",
+      "hero_subtitle_ka": "ინდუსტრიული კომპლექსებიდან თანამედროვე კომერციულ სივრცეებამდე, ჩვენი პროექტები ასახავს ჩვენს ერთგულებას ინოვაციის, ხარისხისა და მდგრადი განვითარების მიმართ."
+    },
+    "created_at": "2026-02-08T20:25:32.902367+00:00",
+    "updated_at": "2026-02-08T20:25:32.902367+00:00"
+  },
+  {
+    "id": "730507fa-5f24-4d5f-9ef7-2751784d07da",
+    "section_key": "portfolio_page",
+    "title": "Portfolio Page",
+    "content": {
+      "title_en": "Portfolio",
+      "title_ka": "პორტფოლიო",
+      "subtitle_en": "A diverse ecosystem of market-leading companies built on excellence and innovation.",
+      "subtitle_ka": "ბაზრის ლიდერი კომპანიების მრავალფეროვანი ეკოსისტემა, აგებული სრულყოფილებასა და ინოვაციებზე."
+    },
+    "created_at": "2026-02-08T20:25:32.902367+00:00",
+    "updated_at": "2026-02-08T20:25:32.902367+00:00"
+  },
+  {
+    "id": "7088cc94-114f-42da-953b-c045eb7d1938",
+    "section_key": "industries_page",
+    "title": "Industries Page",
+    "content": {
+      "title_en": "Business Industries",
+      "title_ka": "ბიზნეს მიმართულებები",
+      "subtitle_en": "Our group unites leading companies across various industries that set the standard for quality.",
+      "subtitle_ka": "ჩვენი ჯგუფი აერთიანებს სხვადასხვა ინდუსტრიის ლიდერ კომპანიებს, რომლებიც ქმნიან ხარისხის სტანდარტს."
+    },
+    "created_at": "2026-02-08T20:25:32.902367+00:00",
+    "updated_at": "2026-02-08T20:25:32.902367+00:00"
+  },
+  {
+    "id": "479bae90-dde1-4471-8d5c-db0d0383a811",
+    "section_key": "about_page",
+    "title": "About Page",
+    "content": {
+      "advantages": [
+        {
+          "icon": "Shield",
+          "text_en": "Rigorous discipline in execution and management.",
+          "text_ka": "მკაცრი დისციპლინა შესრულებასა და მართვაში.",
+          "title_en": "Operational Excellence",
+          "title_ka": "ოპერაციული ბრწყინვალება"
+        },
+        {
+          "icon": "TrendingUp",
+          "text_en": "Focus on long-term value creation over short-term wins.",
+          "text_ka": "ფოკუსირება გრძელვადიანი ღირებულების შექმნაზე.",
+          "title_en": "Sustainable Growth",
+          "title_ka": "მდგრადი ზრდა"
+        },
+        {
+          "icon": "Globe",
+          "text_en": "Bringing international best practices to local markets.",
+          "text_ka": "საერთაშორისო საუკეთესო პრაქტიკის დანერგვა.",
+          "title_en": "Global Standards",
+          "title_ka": "გლობალური სტანდარტები"
+        },
+        {
+          "icon": "Users",
+          "text_en": "Strong governance rooted in trust and integrity.",
+          "text_ka": "ნდობასა და კეთილსინდისიერებაზე დამყარებული მართვა.",
+          "title_en": "Family Values",
+          "title_ka": "საოჯახო ღირებულებები"
+        }
+      ],
+      "hero_title_en": "About the Group",
+      "hero_title_ka": "ჯგუფის შესახებ",
+      "overview_p1_en": "Chocheli Invest Group is a diversified investment holding company with a commanding presence in Georgia's most vital economic sectors. Since our inception in the early 1990s, we have evolved from a single brewery into a powerhouse conglomerate spanning manufacturing, retail, distribution, and construction.",
+      "overview_p1_ka": "ჩოჩელი ინვესტ გრუპი არის დივერსიფიცირებული საინვესტიციო ჰოლდინგი, რომელიც ფლობს წამყვან პოზიციებს საქართველოს ეკონომიკის უმნიშვნელოვანეს სექტორებში.",
+      "overview_p2_en": "Our philosophy is simple yet powerful: Identify market gaps, partner with the best global minds, and execute with military precision. This approach has allowed us to build companies that are not just market participants, but market leaders.",
+      "overview_p2_ka": "ჩვენი ფილოსოფია მარტივია, მაგრამ ძლიერი: ბაზრის საჭიროებების იდენტიფიცირება, გლობალურ ლიდერებთან პარტნიორობა და სიზუსტით შესრულება.",
+      "hero_subtitle_en": "Building the future of Georgian business through 30 years of disciplined execution and strategic vision.",
+      "hero_subtitle_ka": "ქართული ბიზნესის მომავლის შენება 30 წლიანი დისციპლინირებული შესრულებითა და სტრატეგიული ხედვით.",
+      "overview_title_en": "Who We Are",
+      "overview_title_ka": "ვინ ვართ ჩვენ"
+    },
+    "created_at": "2026-02-08T20:25:32.902367+00:00",
+    "updated_at": "2026-02-08T23:11:38.426+00:00"
+  },
+  {
+    "id": "8b4c0edf-fd05-4bbf-ad8c-15b0530042d1",
+    "section_key": "founder_page",
+    "title": "Founder Page",
+    "content": {
+      "hero_name": "ცეზარ ჩოჩელი",
+      "milestones": [
+        {
+          "year": "1991",
+          "title_en": "Founding of Lomisi Company",
+          "title_ka": "კომპანია „ლომისის“ დაარსება"
+        },
+        {
+          "year": "2005",
+          "title_en": "Opening of Natakhtari Brewery",
+          "title_ka": "ნატახტარის ლუდსახარშის გახსნა"
+        },
+        {
+          "year": "2006",
+          "title_en": "Partnership with Knauf",
+          "title_ka": "პარტნიორობა Knauf-თან"
+        },
+        {
+          "year": "2009",
+          "title_en": "Founding of Barambo Confectionery",
+          "title_ka": "საკონდიტრო კომპანია „ბარამბოს“ დაარსება"
+        },
+        {
+          "year": "2011",
+          "title_en": "Opening of Zedazeni Brewery",
+          "title_ka": "ლუდსახარშ „ზედაზენის“ გახსნა"
+        },
+        {
+          "year": "2017",
+          "title_en": "Launch of Magniti Retail Chain",
+          "title_ka": "სავაჭრო ქსელ „მაგნიტის“ გაშვება"
+        },
+        {
+          "year": "2024",
+          "title_en": "Merger with Daily Group",
+          "title_ka": "„დეილი“ ჯგუფთან შერწყმა"
+        },
+        {
+          "year": "2025",
+          "title_en": "EV and Qabala projects expansion",
+          "title_ka": "ელექტრომობილების (EV) და კაბალას პროექტების გაფართოება"
+        }
+      ],
+      "bio_sections": [
+        {
+          "id": 1,
+          "text_en": "Tsezar Chocheli's journey begins during one of the hardest transitional periods for Georgia. From a young age, he was distinguished by leadership qualities and a special attitude towards work.",
+          "text_ka": "ცეზარ ჩოჩელის გზა იწყება საქართველოსთვის ურთულეს, გარდამავალ პერიოდში. ახალგაზრდობიდანვე გამოირჩეოდა ლიდერული თვისებებით და შრომისადმი განსაკუთრებული დამოკიდებულებით. განათლების მიღების პარალელურად, იგი აქტიურად აკვირდებოდა ეკონომიკურ პროცესებს, რამაც ჩამოაყალიბა მისი მომავალი ხედვა — შეექმნა ქართული წარმოება, რომელიც კონკურენციას გაუწევდა იმპორტს.",
+          "title_en": "Early Years and Education",
+          "title_ka": "ადრეული წლები და განათლება",
+          "image_url": "https://i.postimg.cc/L5fSvwW3/506835830-10014646511952069-4363242619380959237-n.jpg"
+        },
+        {
+          "id": 2,
+          "text_en": "In the early 90s, when the country was in complete economic stagnation, Tsezar Chocheli took bold steps in the private sector.",
+          "text_ka": "90-იანების დასაწყისში, როდესაც ქვეყანაში სრული ეკონომიკური სტაგნაცია იყო, ცეზარ ჩოჩელმა გადადგა გაბედული ნაბიჯები კერძო სექტორში. მცირე სავაჭრო ოპერაციებით დაწყებული საქმიანობა მალევე გადაიზარდა უფრო ორგანიზებულ სტრუქტურებში.",
+          "title_en": "First Steps in Business",
+          "title_ka": "პირველი ნაბიჯები ბიზნესში",
+          "image_url": "https://i.postimg.cc/x1g2sKsX/505897957-10014646788618708-2502156204642059171-n.jpg"
+        },
+        {
+          "id": 3,
+          "text_en": "The 2000s proved to be pivotal. The founding of Lomisi and later Natakhtari completely changed the Georgian market.",
+          "text_ka": "2000-იანი წლები გარდამტეხი აღმოჩნდა. „ლომისის“ და შემდგომ „ნატახტარის“ დაარსებამ სრულიად შეცვალა ქართული ბაზარი.",
+          "title_en": "Scaling Manufacturing",
+          "title_ka": "წარმოების მასშტაბირება",
+          "image_url": "https://i.postimg.cc/SsYbNHmb/506372066-10013430508740336-349768235636487541-n.jpg"
+        },
+        {
+          "id": 4,
+          "text_en": "Tsezar Chocheli transferred his vast business experience to public service.",
+          "text_ka": "ბიზნესში დაგროვილი უზარმაზარი გამოცდილება ცეზარ ჩოჩელმა სახელმწიფო სამსახურში გადაიტანა.",
+          "title_en": "Public Service and Leadership",
+          "title_ka": "საჯარო სამსახური და ლიდერობა",
+          "image_url": "https://i.postimg.cc/0jgR6ZNb/506648127-10020319648051422-783754334374978744-n.jpg"
+        },
+        {
+          "id": 5,
+          "text_en": "Limiting to beverages alone was not enough. Business diversification was part of the strategic vision.",
+          "text_ka": "მხოლოდ სასმელების წარმოებით შემოფარგვლა არ იყო საკმარისი. სტრატეგიული ხედვის ნაწილი იყო ბიზნესის დივერსიფიკაცია.",
+          "title_en": "Industrial Diversification",
+          "title_ka": "ინდუსტრიული დივერსიფიკაცია",
+          "image_url": "https://i.postimg.cc/66RNssH4/508447183-10045627062187347-4692553886682053883-n.jpg"
+        },
+        {
+          "id": 6,
+          "text_en": "Magniti was created for direct consumer communication, today counting hundreds of branches across Georgia.",
+          "text_ka": "მომხმარებელთან პირდაპირი კომუნიკაციისთვის შეიქმნა „მაგნიტი“, რომელიც დღეს ასობით ფილიალს ითვლის მთელი საქართველოს მასშტაბით.",
+          "title_en": "Retail and National Scale",
+          "title_ka": "რითეილი და ეროვნული მასშტაბი",
+          "image_url": "https://i.postimg.cc/BQ0f4hkq/508418937-10043544265728960-2290390415442953318-n.jpg"
+        },
+        {
+          "id": 7,
+          "text_en": "Today Tsezar Chocheli continues active work in both business development and legislative directions.",
+          "text_ka": "დღეს ცეზარ ჩოჩელი აგრძელებს აქტიურ საქმიანობას როგორც ბიზნესის განვითარების, ისე საკანონმდებლო მიმართულებით.",
+          "title_en": "Today",
+          "title_ka": "დღევანდელი დღე",
+          "image_url": null
+        }
+      ],
+      "hero_name_en": "Tsezar Chocheli",
+      "hero_image_url": "https://i.postimg.cc/3xVYX4v9/IMG-7716.jpg",
+      "hero_subtitle_en": "30+ years of execution in business, manufacturing and institutional leadership",
+      "hero_subtitle_ka": "30+ წლიანი შესრულება ბიზნესში, წარმოებაში და ინსტიტუციურ ლიდერობაში"
+    },
+    "created_at": "2026-02-08T20:25:32.902367+00:00",
+    "updated_at": "2026-02-17T11:00:57.059+00:00"
+  },
+  {
+    "id": "55350be9-ebaf-48b5-a070-a986fc0cbac9",
+    "section_key": "footer",
+    "title": "Footer",
+    "content": {
+      "email": "info@chocheligroup.com",
+      "phone": "+995 577 98 98 98",
+      "address_en": "Kakheti Highway 45a, Tbilisi",
+      "address_ka": "კახეთის გზატკ. 45ა, თბილისი",
+      "copyright_en": "Chocheli Investment Group",
+      "copyright_ka": "ჩოჩელი საინვესტიციო ჯგუფი",
+      "social_links": {
+        "twitter": "#",
+        "facebook": "#",
+        "linkedin": "#"
+      },
+      "description_en": "Building the future of Georgian business through 30 years of disciplined execution and strategic vision.",
+      "description_ka": "ქართული ბიზნესის მომავლის შენება 30 წლიანი დისციპლინირებული შესრულებითა და სტრატეგიული ხედვით.",
+      "company_name_en": "Chocheli",
+      "company_name_ka": "ჩოჩელი",
+      "company_subtitle_en": "Investment Group",
+      "company_subtitle_ka": "საინვესტიციო ჯგუფი"
+    },
+    "created_at": "2026-02-08T20:25:32.902367+00:00",
+    "updated_at": "2026-02-17T09:45:33.221+00:00"
+  },
+  {
+    "id": "6da74bae-bbf3-45b7-ba7c-8f4d3aa98d0b",
+    "section_key": "founder_highlight",
+    "title": "Founder Highlight",
+    "content": {
+      "name_en": "Tsezar Chocheli",
+      "name_ka": "ცეზარ ჩოჩელი",
+      "image_url": "https://i.postimg.cc/3xVYX4v9/IMG-7716.jpg",
+      "bio_paragraph1_en": "Tsezar Chocheli is the visionary founder of Chocheli Invest Group, bringing over three decades of entrepreneurial excellence and strategic execution to the Georgian business landscape.",
+      "bio_paragraph1_ka": "ცეზარ ჩოჩელი არის ჩოჩელი ინვესტ გრუპის ხედვადი დამფუძნებელი, რომელიც მოაქვს სამი ათეული წლის მეწარმეობრივი ბრწყინვალება და სტრატეგიული შესრულება ქართულ ბიზნეს ლანდშაფტზე.",
+      "bio_paragraph2_en": "Under his leadership, the group has built and scaled thirteen successful companies across manufacturing, retail, and distribution sectors, establishing itself as the #1 retail group in Georgia.",
+      "bio_paragraph2_ka": "მისი ხელმძღვანელობის ქვეშ, ჯგუფმა ააშენა და განავითარა ცამეტი წარმატებული კომპანია წარმოების, საცალო ვაჭრობისა და დისტრიბუციის სექტორებში."
+    },
+    "created_at": "2026-02-08T20:25:32.902367+00:00",
+    "updated_at": "2026-02-17T11:02:18.39+00:00"
+  },
+  {
+    "id": "a18e0f4b-64a7-46da-a970-5dd53a11f82a",
+    "section_key": "contact_page",
+    "title": "Contact Page",
+    "content": {
+      "contacts": [
+        {
+          "type": "address",
+          "sub_en": "Business Center",
+          "sub_ka": "ბიზნეს ცენტრი",
+          "title_en": "Headquarters",
+          "title_ka": "სათაო ოფისი",
+          "value_en": "Kakheti Highway 45a, Tbilisi",
+          "value_ka": "კახეთის გზატკ. 45ა, თბილისი"
+        },
+        {
+          "type": "phone",
+          "sub_en": "Mon-Fri, 9am - 6pm",
+          "sub_ka": "ორშ-პარ, 09:00 - 18:00",
+          "title_en": "Phone",
+          "title_ka": "ტელეფონი",
+          "value_en": "+995 577 98 98 98",
+          "value_ka": "+995 577 98 98 98"
+        },
+        {
+          "type": "email",
+          "sub_en": "For general inquiries",
+          "sub_ka": "ზოგადი კითხვებისთვის",
+          "title_en": "Email",
+          "title_ka": "ელ-ფოსტა",
+          "value_en": "info@chocheligroup.com",
+          "value_ka": "info@chocheligroup.com"
+        }
+      ],
+      "social_links": [
+        "LinkedIn",
+        "Facebook",
+        "Twitter"
+      ],
+      "form_title_en": "Send us a Message",
+      "form_title_ka": "მოგვწერეთ შეტყობინება",
+      "hero_title_en": "Get in Touch",
+      "hero_title_ka": "დაგვიკავშირდით",
+      "form_subtitle_en": "Fill out the form below and our team will respond within 24 hours.",
+      "form_subtitle_ka": "შეავსეთ ფორმა და ჩვენი გუნდი 24 საათში გიპასუხებთ.",
+      "hero_subtitle_en": "Have questions about our portfolio or investment opportunities? We are here to help.",
+      "hero_subtitle_ka": "გაქვთ კითხვები ჩვენს პორტფელთან ან საინვესტიციო შესაძლებლობებთან დაკავშირებით? ჩვენ მზად ვართ დაგეხმაროთ."
+    },
+    "created_at": "2026-02-08T20:25:32.902367+00:00",
+    "updated_at": "2026-02-17T09:45:12.304+00:00"
+  }
+]
