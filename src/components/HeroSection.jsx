@@ -77,7 +77,7 @@ const HeroSection = () => {
       </AnimatePresence>
 
       {/* Noise texture */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none" />
+      <div className="absolute inset-0 bg-[url('https://s3.ihost.ge/site-chocheligroup-com/assets/noise.svg')] opacity-[0.03] pointer-events-none" />
 
       <div className="container mx-auto px-6 relative z-10 pt-24 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center min-h-[80vh]">

@@ -103,7 +103,7 @@ const CompanyDetailPage = () => {
         {/* Hero Section */}
         <section className="relative h-[55vh] md:h-[65vh] w-full overflow-hidden" style={{ backgroundColor: d.bg }}>
            <div className="absolute inset-0 z-0" style={{ background: `linear-gradient(to bottom right, ${d.bg}, ${d.bg2}, ${d.bg})` }} />
-           <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] z-0" />
+           <div className="absolute inset-0 bg-[url('https://s3.ihost.ge/site-chocheligroup-com/assets/noise.svg')] opacity-[0.03] z-0" />
            <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl z-0" />
            <div className="absolute top-1/4 right-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl z-0" />
 

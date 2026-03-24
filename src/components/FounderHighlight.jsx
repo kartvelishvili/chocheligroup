@@ -16,7 +16,7 @@ const FounderHighlight = () => {
 
   return (
     <section className="py-24 relative overflow-hidden" style={{ backgroundColor: d.bg }}>
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none" />
+      <div className="absolute inset-0 bg-[url('https://s3.ihost.ge/site-chocheligroup-com/assets/noise.svg')] opacity-[0.03] pointer-events-none" />
       <div className="absolute top-0 left-1/2 w-[800px] h-[800px] bg-teal-500/[0.04] rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
       
       <div className="container mx-auto px-6 relative z-10">

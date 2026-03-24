@@ -27,7 +27,7 @@ const IndustriesPage = () => {
       <div className="bg-slate-50 min-h-screen overflow-x-hidden">
         {/* Hero Section */}
         <section className="relative pt-28 pb-20 md:pt-36 md:pb-28 overflow-hidden" style={{ backgroundColor: d.bg }}>
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none" />
+          <div className="absolute inset-0 bg-[url('https://s3.ihost.ge/site-chocheligroup-com/assets/noise.svg')] opacity-[0.03] pointer-events-none" />
           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-teal-500/[0.06] rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-cyan-500/[0.04] rounded-full blur-3xl translate-y-1/2 -translate-x-1/4 pointer-events-none" />
           

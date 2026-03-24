@@ -229,7 +229,7 @@ export const companies = [
     milestones: [],
     products: ['FMCG Distribution'],
     color: 'bg-indigo-600',
-    logo: "https://i.postimg.cc/WbDbHz1X/bert'a.jpg"
+    logo: "https://s3.ihost.ge/site-chocheligroup-com/companies/319929454-558602435681314-46098334944817016-n.jpg"
   },
   {
     id: 'barambo',

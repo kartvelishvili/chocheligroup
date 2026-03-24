@@ -19,7 +19,7 @@ export const projects = [
       "https://s3.ihost.ge/site-chocheligroup-com/projects/gabala1.png",
       "https://s3.ihost.ge/site-chocheligroup-com/projects/gabala2.png",
       "https://s3.ihost.ge/site-chocheligroup-com/projects/gabala3.png",
-      "https://images.unsplash.com/photo-1611154376393-dc7c3f518fc8"
+      "https://s3.ihost.ge/site-chocheligroup-com/projects/51f4530ace46-photo-1611154376393-dc7c3f518fc8.jpg"
     ]
   },
   {
@@ -39,9 +39,9 @@ export const projects = [
     },
     images: [
       "https://s3.ihost.ge/site-chocheligroup-com/projects/IMG-7536.jpg",
-      "https://images.unsplash.com/photo-1600188881015-c01168ab7a4a",
-      "https://images.unsplash.com/photo-1669399258274-b573b3a3a840",
-      "https://images.unsplash.com/photo-1651326848981-349fd8aadb37"
+      "https://s3.ihost.ge/site-chocheligroup-com/projects/d6d53d2ff883-photo-1600188881015-c01168ab7a4a.jpg",
+      "https://s3.ihost.ge/site-chocheligroup-com/projects/0d518be80b0e-photo-1669399258274-b573b3a3a840.jpg",
+      "https://s3.ihost.ge/site-chocheligroup-com/projects/aea37c70248b-photo-1651326848981-349fd8aadb37.jpg"
     ]
   },
   {
@@ -61,9 +61,9 @@ export const projects = [
     },
     images: [
       "https://s3.ihost.ge/site-chocheligroup-com/projects/digomi.jpg",
-      "https://images.unsplash.com/photo-1697638164340-6c5fc558bdf2",
-      "https://images.unsplash.com/photo-1564771789713-8586b829cbeb",
-      "https://images.unsplash.com/photo-1682579401399-f65e193d6389"
+      "https://s3.ihost.ge/site-chocheligroup-com/projects/9561bd08f9ec-photo-1697638164340-6c5fc558bdf2.jpg",
+      "https://s3.ihost.ge/site-chocheligroup-com/projects/9aca80064c1c-photo-1564771789713-8586b829cbeb.jpg",
+      "https://s3.ihost.ge/site-chocheligroup-com/projects/a3d4791560dc-photo-1682579401399-f65e193d6389.jpg"
     ]
   }
 ];
