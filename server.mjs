@@ -41,7 +41,15 @@ const S3_BUCKET = process.env.S3_BUCKET || 'site-chocheligroup-com';
 const S3_PUBLIC_BASE = process.env.S3_PUBLIC_URL || 'https://s3.ihost.ge/site-chocheligroup-com';
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: [
+    'https://chocheligroup.com',
+    'https://www.chocheligroup.com',
+    'http://localhost:3000',
+    'http://localhost:5173',
+  ],
+  credentials: true,
+}));
 app.use(express.json({ limit: '10mb' }));
 
 // Serve static frontend build in production

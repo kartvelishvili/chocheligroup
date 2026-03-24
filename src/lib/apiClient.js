@@ -3,7 +3,9 @@
  * Drop-in replacement for Supabase client
  */
 
-const API_BASE = '/api';
+const API_BASE = import.meta.env.PROD
+  ? (import.meta.env.VITE_API_URL || 'https://api.chocheligroup.com/api')
+  : '/api';
 
 async function request(path, options = {}) {
   const url = `${API_BASE}${path}`;
