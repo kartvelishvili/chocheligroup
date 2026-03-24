@@ -12,16 +12,30 @@ const Footer = () => {
   const d = getDesign('footer');
   const lang = language === 'ka' ? 'ka' : 'en';
 
-  const quickLinks = [
-    { label: 'Home', path: '/' },
-    { label: 'About Us', path: '/about' },
-    { label: 'Portfolio', path: '/portfolio' },
-    { label: 'Industries', path: '/industries' },
-    { label: 'Brand Catalog', path: '/brand-catalog' },
-    { label: 'News', path: '/news' },
-    { label: 'Careers', path: '/careers' },
-    { label: 'Contact', path: '/contact' }
+  const defaultQuickLinks = [
+    { label: 'Home', path: '/', enabled: true },
+    { label: 'About Us', path: '/about', enabled: true },
+    { label: 'Portfolio', path: '/portfolio', enabled: true },
+    { label: 'Industries', path: '/industries', enabled: true },
+    { label: 'Brand Catalog', path: '/brand-catalog', enabled: true },
+    { label: 'News', path: '/news', enabled: true },
+    { label: 'Careers', path: '/careers', enabled: true },
+    { label: 'Contact', path: '/contact', enabled: true }
   ];
+
+  // Use admin-configured links if available, otherwise defaults; filter by enabled
+  const quickLinks = (c?.quick_links?.length > 0 ? c.quick_links : defaultQuickLinks).filter(l => l.enabled !== false);
+
+  // Toggle flags from paneli (default true when not set)
+  const showSocialIcons = c?.show_social_icons !== false;
+  const showQuickLinks = c?.show_quick_links !== false;
+  const showLanguageToggle = c?.show_language_toggle !== false;
+  const showAdminLink = c?.show_admin_link !== false;
+  const showLegalLinks = c?.show_legal_links !== false;
+  const showSmarketer = c?.show_smarketer !== false;
+
+  // Check if column 4 has anything to show
+  const showSettingsColumn = showLanguageToggle || showAdminLink;
 
   return (
     <footer className="text-white pt-16 pb-8 relative overflow-hidden border-t border-white/5" style={{ backgroundColor: d.bg }}>
@@ -48,38 +62,42 @@ const Footer = () => {
                 ka: 'ქართული ბიზნესის მომავლის შენება 30 წლიანი დისციპლინირებული შესრულებითა და სტრატეგიული ხედვით.'
               })}
             </p>
-            <div className="flex items-center space-x-4">
-              <a href={c?.social_links?.linkedin || '#'} className="w-10 h-10 rounded-full bg-white/[0.06] border border-white/[0.08] flex items-center justify-center text-slate-400 hover:bg-teal-500 hover:text-white hover:border-teal-500 transition-all duration-300">
-                <Linkedin size={18} />
-              </a>
-              <a href={c?.social_links?.facebook || '#'} className="w-10 h-10 rounded-full bg-white/[0.06] border border-white/[0.08] flex items-center justify-center text-slate-400 hover:bg-teal-500 hover:text-white hover:border-teal-500 transition-all duration-300">
-                <Facebook size={18} />
-              </a>
-              <a href={c?.social_links?.twitter || '#'} className="w-10 h-10 rounded-full bg-white/[0.06] border border-white/[0.08] flex items-center justify-center text-slate-400 hover:bg-teal-500 hover:text-white hover:border-teal-500 transition-all duration-300">
-                <Twitter size={18} />
-              </a>
-            </div>
+            {showSocialIcons && (
+              <div className="flex items-center space-x-4">
+                <a href={c?.social_links?.linkedin || '#'} className="w-10 h-10 rounded-full bg-white/[0.06] border border-white/[0.08] flex items-center justify-center text-slate-400 hover:bg-teal-500 hover:text-white hover:border-teal-500 transition-all duration-300">
+                  <Linkedin size={18} />
+                </a>
+                <a href={c?.social_links?.facebook || '#'} className="w-10 h-10 rounded-full bg-white/[0.06] border border-white/[0.08] flex items-center justify-center text-slate-400 hover:bg-teal-500 hover:text-white hover:border-teal-500 transition-all duration-300">
+                  <Facebook size={18} />
+                </a>
+                <a href={c?.social_links?.twitter || '#'} className="w-10 h-10 rounded-full bg-white/[0.06] border border-white/[0.08] flex items-center justify-center text-slate-400 hover:bg-teal-500 hover:text-white hover:border-teal-500 transition-all duration-300">
+                  <Twitter size={18} />
+                </a>
+              </div>
+            )}
           </div>
 
           {/* Column 2: Quick Links */}
-          <div>
-            <h4 className="text-lg font-bold heading-font mb-6 text-white border-b border-slate-800 pb-2 inline-block">
-              {t('Quick Links')}
-            </h4>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-x-4 gap-y-3">
-              {quickLinks.map((link, index) => (
-                <li key={index}>
-                  <Link
-                    to={link.path}
-                    className="text-slate-400 hover:text-teal-300 hover:translate-x-1 transition-all duration-300 text-sm flex items-center group"
-                  >
-                    <ChevronRight className="w-3 h-3 mr-2 opacity-50 group-hover:opacity-100 text-teal-500" />
-                    {t(link.label)}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {showQuickLinks && quickLinks.length > 0 && (
+            <div>
+              <h4 className="text-lg font-bold heading-font mb-6 text-white border-b border-slate-800 pb-2 inline-block">
+                {t('Quick Links')}
+              </h4>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-x-4 gap-y-3">
+                {quickLinks.map((link, index) => (
+                  <li key={index}>
+                    <Link
+                      to={link.path}
+                      className="text-slate-400 hover:text-teal-300 hover:translate-x-1 transition-all duration-300 text-sm flex items-center group"
+                    >
+                      <ChevronRight className="w-3 h-3 mr-2 opacity-50 group-hover:opacity-100 text-teal-500" />
+                      {t(link.label)}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Column 3: Contact */}
           <div>
@@ -111,54 +129,66 @@ const Footer = () => {
           </div>
 
           {/* Column 4: Language & Admin */}
-          <div className="flex flex-col">
-             <h4 className="text-lg font-bold heading-font mb-6 text-white border-b border-white/10 pb-2 inline-block">
-                {t({ en: 'Settings', ka: 'პარამეტრები' })}
-             </h4>
-             
-             <button
-               onClick={toggleLanguage}
-               className="flex items-center justify-between w-full p-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] hover:border-teal-400/20 transition-all duration-300 group mb-4"
-             >
-               <div className="flex items-center space-x-3">
-                  <Globe className="w-5 h-5 text-slate-400 group-hover:text-teal-300 transition-colors" />
-                  <span className="text-sm font-medium text-slate-200">
-                    {language === 'en' ? 'Language: English' : 'ენა: ქართული'}
-                  </span>
-               </div>
-               <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
-             </button>
+          {showSettingsColumn && (
+            <div className="flex flex-col">
+               <h4 className="text-lg font-bold heading-font mb-6 text-white border-b border-white/10 pb-2 inline-block">
+                  {t({ en: 'Settings', ka: 'პარამეტრები' })}
+               </h4>
+               
+               {showLanguageToggle && (
+                 <button
+                   onClick={toggleLanguage}
+                   className="flex items-center justify-between w-full p-4 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] hover:border-teal-400/20 transition-all duration-300 group mb-4"
+                 >
+                   <div className="flex items-center space-x-3">
+                      <Globe className="w-5 h-5 text-slate-400 group-hover:text-teal-300 transition-colors" />
+                      <span className="text-sm font-medium text-slate-200">
+                        {language === 'en' ? 'Language: English' : 'ენა: ქართული'}
+                      </span>
+                   </div>
+                   <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
+                 </button>
+               )}
 
-             <Link to="/admin" className="flex items-center justify-between w-full p-4 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-transparent hover:border-white/[0.06] transition-all duration-300 group mt-auto">
-                 <div className="flex items-center space-x-3">
-                    <Shield className="w-5 h-5 text-slate-500 group-hover:text-white transition-colors" />
-                    <span className="text-sm font-medium text-slate-500 group-hover:text-white transition-colors">Admin Portal</span>
-                 </div>
-             </Link>
-          </div>
+               {showAdminLink && (
+                 <Link to="/paneli" className="flex items-center justify-between w-full p-4 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] border border-transparent hover:border-white/[0.06] transition-all duration-300 group mt-auto">
+                     <div className="flex items-center space-x-3">
+                        <Shield className="w-5 h-5 text-slate-500 group-hover:text-white transition-colors" />
+                        <span className="text-sm font-medium text-slate-500 group-hover:text-white transition-colors">Admin Portal</span>
+                     </div>
+                 </Link>
+               )}
+            </div>
+          )}
         </div>
 
         {/* Bottom Bar */}
         <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-slate-500 text-xs body-font text-center md:text-left">
-            &copy; {new Date().getFullYear()} Chocheli Investment Group. {t('All rights reserved.')}
+            &copy; {new Date().getFullYear()} {c?.copyright_text || 'Chocheli Investment Group.'} {c?.rights_text || t('All rights reserved.')}
           </p>
           
           <div className="flex items-center space-x-6">
-             <Link to="#" className="text-slate-500 hover:text-white text-xs transition-colors">Privacy Policy</Link>
-             <Link to="#" className="text-slate-500 hover:text-white text-xs transition-colors">Terms of Use</Link>
+             {showLegalLinks && (
+               <>
+                 <Link to={c?.privacy_link || '#'} className="text-slate-500 hover:text-white text-xs transition-colors">Privacy Policy</Link>
+                 <Link to={c?.terms_link || '#'} className="text-slate-500 hover:text-white text-xs transition-colors">Terms of Use</Link>
+               </>
+             )}
              
              {/* Smarketer Logo */}
-             <div className="flex items-center gap-2 pl-6 border-l border-slate-800 opacity-60 hover:opacity-100 transition-opacity">
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider">Dev by</span>
-                <a href="https://smarketer.ge" target="_blank" rel="noopener noreferrer">
-                   <img 
-                      src="https://s3.ihost.ge/site-chocheligroup-com/logos/smarketer-white.webp" 
-                      alt="Smarketer" 
-                      className="h-4 w-auto"
-                   />
-                </a>
-             </div>
+             {showSmarketer && (
+               <div className={`flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity ${showLegalLinks ? 'pl-6 border-l border-slate-800' : ''}`}>
+                  <span className="text-[10px] text-slate-500 uppercase tracking-wider">{c?.smarketer_text || 'Dev by'}</span>
+                  <a href={c?.smarketer_url || 'https://smarketer.ge'} target="_blank" rel="noopener noreferrer">
+                     <img 
+                        src={c?.smarketer_logo_url || 'https://s3.ihost.ge/site-chocheligroup-com/logos/smarketer-white.webp'} 
+                        alt="Smarketer" 
+                        className="h-4 w-auto"
+                     />
+                  </a>
+               </div>
+             )}
           </div>
         </div>
       </div>

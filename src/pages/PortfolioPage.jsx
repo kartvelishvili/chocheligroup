@@ -20,17 +20,17 @@ const adaptCompany = (company, language) => ({
 
 /* ══════════ HERO ══════════ */
 const PageHero = ({ d, c, lang, t }) => (
-  <section className="py-28 relative overflow-hidden" style={{ background: `linear-gradient(135deg, ${d.heroBg || d.bg}, ${(d.heroBg || d.bg)}DD)` }}>
-    <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at top right, ${d.accent}15, transparent 60%)` }} />
-    <div className="absolute bottom-0 left-0 w-full h-1" style={{ background: `linear-gradient(to right, ${d.accent}, transparent)` }} />
+  <section className="py-28 relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at top right, rgba(30,64,175,0.15), transparent 60%)' }} />
+    <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-corporate-blue to-transparent" />
     <div className="container mx-auto px-6 relative z-10 text-center">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="inline-block px-5 py-2 rounded-full text-sm font-semibold mb-6" style={{ backgroundColor: `${d.accent}15`, color: d.heroText || '#fff', border: `1px solid ${d.accent}30` }}>
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="inline-block px-5 py-2 rounded-full text-sm font-semibold mb-6 bg-corporate-blue/15 text-white border border-corporate-blue/30">
         {t({ en: '13+ Companies', ka: '13+ კომპანია' })}
       </motion.div>
-      <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-6xl font-bold heading-font mb-6" style={{ color: d.heroText || '#fff' }}>
+      <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl md:text-6xl font-bold heading-font mb-6 text-white">
         {c?.[`title_${lang}`] || t('Portfolio')}
       </motion.h1>
-      <p className="text-xl max-w-2xl mx-auto body-font" style={{ color: (d.heroText || '#fff') + 'AA' }}>
+      <p className="text-xl max-w-2xl mx-auto body-font text-white/70">
         {c?.[`subtitle_${lang}`] || t({ en: 'A diverse ecosystem of market-leading companies built on excellence and innovation.', ka: '\u10d1\u10d0\u10d6\u10e0\u10d8\u10e1 \u10da\u10d8\u10d3\u10d4\u10e0\u10d8 \u10d9\u10dd\u10db\u10de\u10d0\u10dc\u10d8\u10d4\u10d1\u10d8\u10e1 \u10db\u10e0\u10d0\u10d5\u10d0\u10da\u10e4\u10d4\u10e0\u10dd\u10d5\u10d0\u10dc\u10d8 \u10d4\u10d9\u10dd\u10e1\u10d8\u10e1\u10e2\u10d4\u10db\u10d0.' })}
       </p>
     </div>

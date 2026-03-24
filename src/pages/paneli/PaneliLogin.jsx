@@ -23,7 +23,7 @@ const PaneliLogin = () => {
     if (!username.trim() || !password.trim()) { setError('შეავსეთ ყველა ველი'); return; }
     setSubmitting(true);
     await new Promise(r => setTimeout(r, 300));
-    const result = login(username.trim(), password);
+    const result = await login(username.trim(), password);
     if (result.success) {
       navigate('/paneli/dashboard');
     } else {

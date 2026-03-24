@@ -31,39 +31,39 @@ const defaultBioSections = [
 /* classic layout - Full hero, timeline, alternating bio */
 const ClassicFounder = ({ d, c, milestones, bioSections }) => (
   <div style={{ backgroundColor: d.bg2 || '#f8fafc' }}>
-    <section className="relative min-h-[85vh] w-full overflow-hidden flex items-center" style={{ background: `linear-gradient(135deg, ${d.heroBg || '#0a1628'}, ${(d.heroBg || '#0a1628')}DD)` }}>
-      <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 75% 50%, ${d.accent}18, transparent 65%)` }} />
-      <div className="absolute bottom-0 left-0 w-full h-1" style={{ background: `linear-gradient(to right, ${d.accent}, transparent)` }} />
+    <section className="relative min-h-[85vh] w-full overflow-hidden flex items-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 75% 50%, rgba(30,64,175,0.15), transparent 65%)' }} />
+      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-corporate-blue to-transparent" />
       <div className="container mx-auto px-6 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} className="order-2 lg:order-1">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold mb-8" style={{ backgroundColor: `${d.accent}15`, color: d.heroAccent || d.accent, border: `1px solid ${d.accent}30` }}>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold mb-8 bg-corporate-blue/15 text-corporate-blue border border-corporate-blue/30">
               {'\u10d3\u10d0\u10db\u10e4\u10e3\u10eb\u10dc\u10d4\u10d1\u10d4\u10da\u10d8 & \u10d7\u10d0\u10d5\u10db\u10ef\u10d3\u10dd\u10db\u10d0\u10e0\u10d4'}
             </motion.div>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold heading-font mb-6 leading-tight" style={{ color: d.heroText || '#fff' }}>{c?.hero_name || '\u10ea\u10d4\u10d6\u10d0\u10e0 \u10e9\u10dd\u10e9\u10d4\u10da\u10d8'}</h1>
-            <div className="h-1.5 w-24 rounded-full mb-8" style={{ background: `linear-gradient(to right, ${d.accent}, ${d.accent}44)` }} />
-            <p className="text-xl md:text-2xl font-light leading-relaxed body-font max-w-xl" style={{ color: (d.heroText || '#fff') + 'BB' }}>{c?.hero_subtitle_ka || '30+ \u10ec\u10da\u10d8\u10d0\u10dc\u10d8 \u10e8\u10d4\u10e1\u10e0\u10e3\u10da\u10d4\u10d1\u10d0 \u10d1\u10d8\u10d6\u10dc\u10d4\u10e1\u10e8\u10d8, \u10ec\u10d0\u10e0\u10db\u10dd\u10d4\u10d1\u10d0\u10e8\u10d8 \u10d3\u10d0 \u10d8\u10dc\u10e1\u10e2\u10d8\u10e2\u10e3\u10ea\u10d8\u10e3\u10e0 \u10da\u10d8\u10d3\u10d4\u10e0\u10dd\u10d1\u10d0\u10e8\u10d8'}</p>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold heading-font mb-6 leading-tight text-white">{c?.hero_name || '\u10ea\u10d4\u10d6\u10d0\u10e0 \u10e9\u10dd\u10e9\u10d4\u10da\u10d8'}</h1>
+            <div className="h-1.5 w-24 rounded-full mb-8 bg-gradient-to-r from-corporate-yellow to-corporate-yellow/30" />
+            <p className="text-xl md:text-2xl font-light leading-relaxed body-font max-w-xl text-white/75">{c?.hero_subtitle_ka || '30+ \u10ec\u10da\u10d8\u10d0\u10dc\u10d8 \u10e8\u10d4\u10e1\u10e0\u10e3\u10da\u10d4\u10d1\u10d0 \u10d1\u10d8\u10d6\u10dc\u10d4\u10e1\u10e8\u10d8, \u10ec\u10d0\u10e0\u10db\u10dd\u10d4\u10d1\u10d0\u10e8\u10d8 \u10d3\u10d0 \u10d8\u10dc\u10e1\u10e2\u10d8\u10e2\u10e3\u10ea\u10d8\u10e3\u10e0 \u10da\u10d8\u10d3\u10d4\u10e0\u10dd\u10d1\u10d0\u10e8\u10d8'}</p>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="flex items-center gap-8 mt-10">
-              <div className="text-center"><div className="text-3xl font-bold heading-font" style={{ color: d.accent }}>30+</div><div className="text-xs uppercase tracking-wider mt-1" style={{ color: (d.heroText || '#fff') + '88' }}>{'\u10ec\u10d4\u10da\u10d8'}</div></div>
-              <div className="w-px h-10" style={{ backgroundColor: (d.heroText || '#fff') + '22' }} />
-              <div className="text-center"><div className="text-3xl font-bold heading-font" style={{ color: d.accent }}>13+</div><div className="text-xs uppercase tracking-wider mt-1" style={{ color: (d.heroText || '#fff') + '88' }}>{'\u10d9\u10dd\u10db\u10de\u10d0\u10dc\u10d8\u10d0'}</div></div>
-              <div className="w-px h-10" style={{ backgroundColor: (d.heroText || '#fff') + '22' }} />
-              <div className="text-center"><div className="text-3xl font-bold heading-font" style={{ color: d.accent }}>#1</div><div className="text-xs uppercase tracking-wider mt-1" style={{ color: (d.heroText || '#fff') + '88' }}>{'\u10e0\u10d8\u10d7\u10d4\u10d8\u10da\u10d8'}</div></div>
+              <div className="text-center"><div className="text-3xl font-bold heading-font text-corporate-yellow">30+</div><div className="text-xs uppercase tracking-wider mt-1 text-white/50">{'\u10ec\u10d4\u10da\u10d8'}</div></div>
+              <div className="w-px h-10 bg-white/15" />
+              <div className="text-center"><div className="text-3xl font-bold heading-font text-corporate-yellow">13+</div><div className="text-xs uppercase tracking-wider mt-1 text-white/50">{'\u10d9\u10dd\u10db\u10de\u10d0\u10dc\u10d8\u10d0'}</div></div>
+              <div className="w-px h-10 bg-white/15" />
+              <div className="text-center"><div className="text-3xl font-bold heading-font text-corporate-yellow">#1</div><div className="text-xs uppercase tracking-wider mt-1 text-white/50">{'\u10e0\u10d8\u10d7\u10d4\u10d8\u10da\u10d8'}</div></div>
             </motion.div>
           </motion.div>
           <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.2 }} className="order-1 lg:order-2 flex justify-center">
             <div className="relative">
-              <div className="absolute -inset-3 rounded-3xl blur-2xl opacity-30" style={{ backgroundColor: d.accent }} />
-              <div className="relative aspect-[3/4] w-72 md:w-80 lg:w-96 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-                <img src={c?.hero_image_url || "https://s3.ihost.ge/site-chocheligroup-com/founder/506208349-10020878614662192-2846366780113441950-n.jpg"} alt="" className="w-full h-full object-cover object-top" />
-                <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${d.heroBg || '#0a1628'}44, transparent 40%)` }} />
+              <div className="absolute -inset-3 rounded-3xl bg-corporate-blue/30 blur-2xl" />
+              <div className="relative w-72 md:w-80 lg:w-96 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+                <img src={c?.hero_image_url || "https://s3.ihost.ge/site-chocheligroup-com/founder/506208349-10020878614662192-2846366780113441950-n.jpg"} alt="" className="w-full h-auto object-contain rounded-2xl" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 to-transparent" />
               </div>
             </div>
           </motion.div>
         </div>
       </div>
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 1, repeat: Infinity, repeatType: 'reverse' }} className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20" style={{ color: d.heroText || '#fff' }}>
-        <ArrowDown className="w-7 h-7 opacity-60" />
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5, duration: 1, repeat: Infinity, repeatType: 'reverse' }} className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 text-white/60">
+        <ArrowDown className="w-7 h-7" />
       </motion.div>
     </section>
 
@@ -115,30 +115,30 @@ const ClassicFounder = ({ d, c, milestones, bioSections }) => (
 /* modern layout - Compact hero with portrait, cards */
 const ModernFounder = ({ d, c, milestones, bioSections }) => (
   <div style={{ backgroundColor: d.bg || '#f8fafc' }}>
-    <section className="relative py-20 md:py-28 overflow-hidden" style={{ background: `linear-gradient(135deg, ${d.heroBg || d.bg}, ${(d.heroBg || d.bg)}DD)` }}>
-      <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 75% 50%, ${d.accent}18, transparent 65%)` }} />
-      <div className="absolute bottom-0 left-0 w-full h-1" style={{ background: `linear-gradient(to right, ${d.accent}, transparent)` }} />
+    <section className="relative py-20 md:py-28 overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 75% 50%, rgba(30,64,175,0.15), transparent 65%)' }} />
+      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-corporate-blue to-transparent" />
       <div className="container mx-auto px-6 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
-            <motion.div className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold mb-8" style={{ backgroundColor: `${d.accent}15`, color: d.heroAccent || d.accent, border: `1px solid ${(d.heroAccent || d.accent)}30` }} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            <motion.div className="inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold mb-8 bg-corporate-blue/15 text-corporate-blue border border-corporate-blue/30" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               {'\u10d3\u10d0\u10db\u10e4\u10e3\u10eb\u10dc\u10d4\u10d1\u10d4\u10da\u10d8 & \u10d7\u10d0\u10d5\u10db\u10ef\u10d3\u10dd\u10db\u10d0\u10e0\u10d4'}
             </motion.div>
-            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-5xl md:text-6xl font-bold heading-font mb-6 leading-tight" style={{ color: d.heroText || '#fff' }}>{c?.hero_name || '\u10ea\u10d4\u10d6\u10d0\u10e0 \u10e9\u10dd\u10e9\u10d4\u10da\u10d8'}</motion.h1>
-            <div className="h-1 w-20 rounded-full mb-6" style={{ background: `linear-gradient(to right, ${d.accent}, ${d.accent}44)` }} />
-            <p className="text-xl body-font leading-relaxed" style={{ color: (d.heroText || '#fff') + 'BB' }}>{c?.hero_subtitle_ka || '30+ \u10ec\u10da\u10d8\u10d0\u10dc\u10d8 \u10e8\u10d4\u10e1\u10e0\u10e3\u10da\u10d4\u10d1\u10d0 \u10d1\u10d8\u10d6\u10dc\u10d4\u10e1\u10e8\u10d8, \u10ec\u10d0\u10e0\u10db\u10dd\u10d4\u10d1\u10d0\u10e8\u10d8 \u10d3\u10d0 \u10d8\u10dc\u10e1\u10e2\u10d8\u10e2\u10e3\u10ea\u10d8\u10e3\u10e0 \u10da\u10d8\u10d3\u10d4\u10e0\u10dd\u10d1\u10d0\u10e8\u10d8'}</p>
+            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-5xl md:text-6xl font-bold heading-font mb-6 leading-tight text-white">{c?.hero_name || '\u10ea\u10d4\u10d6\u10d0\u10e0 \u10e9\u10dd\u10e9\u10d4\u10da\u10d8'}</motion.h1>
+            <div className="h-1 w-20 rounded-full mb-6 bg-gradient-to-r from-corporate-yellow to-corporate-yellow/30" />
+            <p className="text-xl body-font leading-relaxed text-white/75">{c?.hero_subtitle_ka || '30+ \u10ec\u10da\u10d8\u10d0\u10dc\u10d8 \u10e8\u10d4\u10e1\u10e0\u10e3\u10da\u10d4\u10d1\u10d0 \u10d1\u10d8\u10d6\u10dc\u10d4\u10e1\u10e8\u10d8, \u10ec\u10d0\u10e0\u10db\u10dd\u10d4\u10d1\u10d0\u10e8\u10d8 \u10d3\u10d0 \u10d8\u10dc\u10e1\u10e2\u10d8\u10e2\u10e3\u10ea\u10d8\u10e3\u10e0 \u10da\u10d8\u10d3\u10d4\u10e0\u10dd\u10d1\u10d0\u10e8\u10d8'}</p>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="flex items-center gap-8 mt-8">
-              <div className="text-center"><div className="text-2xl font-bold heading-font" style={{ color: d.accent }}>30+</div><div className="text-xs uppercase tracking-wider mt-1" style={{ color: (d.heroText || '#fff') + '77' }}>{'\u10ec\u10d4\u10da\u10d8'}</div></div>
-              <div className="w-px h-8" style={{ backgroundColor: (d.heroText || '#fff') + '22' }} />
-              <div className="text-center"><div className="text-2xl font-bold heading-font" style={{ color: d.accent }}>13+</div><div className="text-xs uppercase tracking-wider mt-1" style={{ color: (d.heroText || '#fff') + '77' }}>{'\u10d9\u10dd\u10db\u10de\u10d0\u10dc\u10d8\u10d0'}</div></div>
+              <div className="text-center"><div className="text-2xl font-bold heading-font text-corporate-yellow">30+</div><div className="text-xs uppercase tracking-wider mt-1 text-white/50">{'\u10ec\u10d4\u10da\u10d8'}</div></div>
+              <div className="w-px h-8 bg-white/15" />
+              <div className="text-center"><div className="text-2xl font-bold heading-font text-corporate-yellow">13+</div><div className="text-xs uppercase tracking-wider mt-1 text-white/50">{'\u10d9\u10dd\u10db\u10de\u10d0\u10dc\u10d8\u10d0'}</div></div>
             </motion.div>
           </div>
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 }} className="flex justify-center">
             <div className="relative">
-              <div className="absolute -inset-3 rounded-3xl blur-2xl opacity-25" style={{ backgroundColor: d.accent }} />
-              <div className="relative aspect-[3/4] w-72 md:w-80 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-                <img src={c?.hero_image_url || "https://s3.ihost.ge/site-chocheligroup-com/founder/506208349-10020878614662192-2846366780113441950-n.jpg"} alt="" className="w-full h-full object-cover object-top" />
-                <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${d.heroBg || d.bg}44, transparent 40%)` }} />
+              <div className="absolute -inset-3 rounded-3xl bg-corporate-blue/30 blur-2xl" />
+              <div className="relative w-72 md:w-80 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+                <img src={c?.hero_image_url || "https://s3.ihost.ge/site-chocheligroup-com/founder/506208349-10020878614662192-2846366780113441950-n.jpg"} alt="" className="w-full h-auto object-contain rounded-2xl" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 to-transparent" />
               </div>
             </div>
           </motion.div>
@@ -172,33 +172,33 @@ const ModernFounder = ({ d, c, milestones, bioSections }) => (
 /* cinematic layout - Full-bleed, side numbers */
 const CinematicFounder = ({ d, c, milestones, bioSections }) => (
   <div style={{ backgroundColor: d.bg || '#faf9f7' }}>
-    <section className="relative min-h-[85vh] w-full overflow-hidden flex items-center" style={{ background: `linear-gradient(135deg, ${d.heroBg || '#0a1628'}, ${(d.heroBg || '#0a1628')}CC)` }}>
-      <div className="absolute inset-0" style={{ background: `radial-gradient(ellipse at 70% 50%, ${d.accent}15, transparent 60%)` }} />
-      <div className="absolute bottom-0 left-0 w-full h-1" style={{ background: `linear-gradient(to right, ${d.accent}, transparent)` }} />
+    <section className="relative min-h-[85vh] w-full overflow-hidden flex items-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 70% 50%, rgba(30,64,175,0.15), transparent 60%)' }} />
+      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-corporate-blue to-transparent" />
       <div className="container mx-auto px-6 relative z-10">
         <div className="grid lg:grid-cols-5 gap-12 lg:gap-16 items-center">
           <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} className="lg:col-span-3">
             <div className="flex items-center gap-4 mb-8">
-              <div className="h-px flex-1 max-w-[60px]" style={{ backgroundColor: d.accent }} />
-              <span className="text-sm uppercase tracking-[0.3em] heading-font" style={{ color: d.heroAccent || d.accent }}>{'\u10d3\u10d0\u10db\u10e4\u10e3\u10eb\u10dc\u10d4\u10d1\u10d4\u10da\u10d8'}</span>
+              <div className="h-px flex-1 max-w-[60px] bg-corporate-yellow" />
+              <span className="text-sm uppercase tracking-[0.3em] heading-font text-corporate-yellow">{'\u10d3\u10d0\u10db\u10e4\u10e3\u10eb\u10dc\u10d4\u10d1\u10d4\u10da\u10d8'}</span>
             </div>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold heading-font leading-none mb-6" style={{ color: d.heroText || '#fff' }}>{c?.hero_name || '\u10ea\u10d4\u10d6\u10d0\u10e0 \u10e9\u10dd\u10e9\u10d4\u10da\u10d8'}</h1>
-            <div className="h-1.5 w-24 rounded-full mb-8" style={{ background: `linear-gradient(to right, ${d.accent}, ${d.accent}44)` }} />
-            <p className="text-xl md:text-2xl body-font max-w-2xl leading-relaxed" style={{ color: (d.heroText || '#fff') + 'BB' }}>{c?.hero_subtitle_ka || '30+ \u10ec\u10da\u10d8\u10d0\u10dc\u10d8 \u10e8\u10d4\u10e1\u10e0\u10e3\u10da\u10d4\u10d1\u10d0 \u10d1\u10d8\u10d6\u10dc\u10d4\u10e1\u10e8\u10d8, \u10ec\u10d0\u10e0\u10db\u10dd\u10d4\u10d1\u10d0\u10e8\u10d8 \u10d3\u10d0 \u10d8\u10dc\u10e1\u10e2\u10d8\u10e2\u10e3\u10ea\u10d8\u10e3\u10e0 \u10da\u10d8\u10d3\u10d4\u10e0\u10dd\u10d1\u10d0\u10e8\u10d8'}</p>
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold heading-font leading-none mb-6 text-white">{c?.hero_name || '\u10ea\u10d4\u10d6\u10d0\u10e0 \u10e9\u10dd\u10e9\u10d4\u10da\u10d8'}</h1>
+            <div className="h-1.5 w-24 rounded-full mb-8 bg-gradient-to-r from-corporate-yellow to-corporate-yellow/30" />
+            <p className="text-xl md:text-2xl body-font max-w-2xl leading-relaxed text-white/75">{c?.hero_subtitle_ka || '30+ \u10ec\u10da\u10d8\u10d0\u10dc\u10d8 \u10e8\u10d4\u10e1\u10e0\u10e3\u10da\u10d4\u10d1\u10d0 \u10d1\u10d8\u10d6\u10dc\u10d4\u10e1\u10e8\u10d8, \u10ec\u10d0\u10e0\u10db\u10dd\u10d4\u10d1\u10d0\u10e8\u10d8 \u10d3\u10d0 \u10d8\u10dc\u10e1\u10e2\u10d8\u10e2\u10e3\u10ea\u10d8\u10e3\u10e0 \u10da\u10d8\u10d3\u10d4\u10e0\u10dd\u10d1\u10d0\u10e8\u10d8'}</p>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="flex items-center gap-8 mt-10">
-              <div className="text-center"><div className="text-3xl font-bold heading-font" style={{ color: d.accent }}>30+</div><div className="text-xs uppercase tracking-wider mt-1" style={{ color: (d.heroText || '#fff') + '77' }}>{'\u10ec\u10d4\u10da\u10d8'}</div></div>
-              <div className="w-px h-10" style={{ backgroundColor: (d.heroText || '#fff') + '22' }} />
-              <div className="text-center"><div className="text-3xl font-bold heading-font" style={{ color: d.accent }}>13+</div><div className="text-xs uppercase tracking-wider mt-1" style={{ color: (d.heroText || '#fff') + '77' }}>{'\u10d9\u10dd\u10db\u10de\u10d0\u10dc\u10d8\u10d0'}</div></div>
-              <div className="w-px h-10" style={{ backgroundColor: (d.heroText || '#fff') + '22' }} />
-              <div className="text-center"><div className="text-3xl font-bold heading-font" style={{ color: d.accent }}>#1</div><div className="text-xs uppercase tracking-wider mt-1" style={{ color: (d.heroText || '#fff') + '77' }}>{'\u10e0\u10d8\u10d7\u10d4\u10d8\u10da\u10d8'}</div></div>
+              <div className="text-center"><div className="text-3xl font-bold heading-font text-corporate-yellow">30+</div><div className="text-xs uppercase tracking-wider mt-1 text-white/50">{'\u10ec\u10d4\u10da\u10d8'}</div></div>
+              <div className="w-px h-10 bg-white/15" />
+              <div className="text-center"><div className="text-3xl font-bold heading-font text-corporate-yellow">13+</div><div className="text-xs uppercase tracking-wider mt-1 text-white/50">{'\u10d9\u10dd\u10db\u10de\u10d0\u10dc\u10d8\u10d0'}</div></div>
+              <div className="w-px h-10 bg-white/15" />
+              <div className="text-center"><div className="text-3xl font-bold heading-font text-corporate-yellow">#1</div><div className="text-xs uppercase tracking-wider mt-1 text-white/50">{'\u10e0\u10d8\u10d7\u10d4\u10d8\u10da\u10d8'}</div></div>
             </motion.div>
           </motion.div>
           <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.2 }} className="lg:col-span-2 flex justify-center">
             <div className="relative">
-              <div className="absolute -inset-3 rounded-3xl blur-2xl opacity-25" style={{ backgroundColor: d.accent }} />
-              <div className="relative aspect-[3/4] w-64 md:w-72 lg:w-80 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-                <img src={c?.hero_image_url || "https://s3.ihost.ge/site-chocheligroup-com/founder/506208349-10020878614662192-2846366780113441950-n.jpg"} alt="" className="w-full h-full object-cover object-top" />
-                <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${d.heroBg || '#0a1628'}55, transparent 40%)` }} />
+              <div className="absolute -inset-3 rounded-3xl bg-corporate-blue/30 blur-2xl" />
+              <div className="relative w-64 md:w-72 lg:w-80 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+                <img src={c?.hero_image_url || "https://s3.ihost.ge/site-chocheligroup-com/founder/506208349-10020878614662192-2846366780113441950-n.jpg"} alt="" className="w-full h-auto object-contain rounded-2xl" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 to-transparent" />
               </div>
             </div>
           </motion.div>

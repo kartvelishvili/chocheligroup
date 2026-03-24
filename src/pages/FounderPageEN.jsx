@@ -116,9 +116,9 @@ const FounderPageEN = () => {
               <motion.div initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.2 }} className="order-1 lg:order-2 flex justify-center">
                 <div className="relative">
                   <div className="absolute -inset-3 rounded-3xl bg-corporate-blue/30 blur-2xl" />
-                  <div className="relative aspect-[3/4] w-72 md:w-80 lg:w-96 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-                    <img src={c?.hero_image_url || "https://s3.ihost.ge/site-chocheligroup-com/founder/506208349-10020878614662192-2846366780113441950-n.jpg"} alt={c?.hero_name_en || 'Tsezar Chocheli'} className="w-full h-full object-cover object-top" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent" />
+                  <div className="relative w-72 md:w-80 lg:w-96 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+                    <img src={c?.hero_image_url || "https://s3.ihost.ge/site-chocheligroup-com/founder/506208349-10020878614662192-2846366780113441950-n.jpg"} alt={c?.hero_name_en || 'Tsezar Chocheli'} className="w-full h-auto object-contain rounded-2xl" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 to-transparent" />
                   </div>
                 </div>
               </motion.div>

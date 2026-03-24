@@ -8,11 +8,6 @@ export const usePaneliAuth = () => {
   return ctx;
 };
 
-const CREDENTIALS = {
-  username: 'chocheli',
-  password: 'Panel2025!secure'
-};
-
 export const PaneliAuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
@@ -36,18 +31,28 @@ export const PaneliAuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = (username, password) => {
-    if (username === CREDENTIALS.username && password === CREDENTIALS.password) {
+  const login = async (username, password) => {
+    try {
+      const res = await fetch('/api/paneli/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        return { success: false, error: data.error || 'არასწორი მომხმარებელი ან პაროლი' };
+      }
       const session = {
-        user: { username, role: 'panel_admin' },
+        user: data.user,
         expiry: Date.now() + 7 * 24 * 60 * 60 * 1000 // 7 days
       };
       localStorage.setItem('paneli_session', JSON.stringify(session));
       setIsAuthenticated(true);
-      setUser(session.user);
+      setUser(data.user);
       return { success: true };
+    } catch (err) {
+      return { success: false, error: 'სერვერთან დაკავშირება ვერ მოხერხდა' };
     }
-    return { success: false, error: 'არასწორი მომხმარებელი ან პაროლი' };
   };
 
   const logout = () => {

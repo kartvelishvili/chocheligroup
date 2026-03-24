@@ -112,11 +112,12 @@ app.put('/api/companies/reorder', async (req, res) => {
 app.put('/api/companies/:id', async (req, res) => {
   try {
     const fields = req.body;
+    const SKIP_FIELDS = new Set(['id', 'brands', 'sub_brands', 'created_at', 'updated_at']);
     const setClauses = [];
     const values = [];
     let i = 1;
     for (const [key, val] of Object.entries(fields)) {
-      if (key === 'id') continue;
+      if (SKIP_FIELDS.has(key)) continue;
       setClauses.push(`"${key}" = $${i}`);
       values.push(val);
       i++;
@@ -963,7 +964,31 @@ const ensureAdminsTable = async () => {
       updated_at TIMESTAMP DEFAULT NOW()
     )
   `);
+  // Seed default admin if table is empty
+  const { rows } = await pool.query('SELECT COUNT(*) as cnt FROM panel_admins');
+  if (parseInt(rows[0].cnt) === 0) {
+    await pool.query(
+      "INSERT INTO panel_admins (username, password, role) VALUES ('chocheli', 'Panel2025!secure', 'super_admin') ON CONFLICT DO NOTHING"
+    );
+  }
 };
+
+// Paneli Login — checks panel_admins table
+app.post('/api/paneli/login', async (req, res) => {
+  try {
+    await ensureAdminsTable();
+    const { username, password } = req.body;
+    if (!username || !password) return res.status(400).json({ error: 'Username and password required' });
+    const { rows } = await pool.query(
+      'SELECT id, username, role FROM panel_admins WHERE username = $1 AND password = $2',
+      [username, password]
+    );
+    if (rows.length === 0) return res.status(401).json({ error: 'არასწორი მომხმარებელი ან პაროლი' });
+    res.json({ user: rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 app.get('/api/panel-admins', async (req, res) => {
   try {
