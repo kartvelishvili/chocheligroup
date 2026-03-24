@@ -2,42 +2,51 @@
  * Express API Server for chocheligroup.com
  * Replaces Supabase REST API with direct PostgreSQL + MinIO S3
  */
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import pg from 'pg';
 import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const { Pool } = pg;
 
 // ══════════════════════════════════════
-// Configuration
+// Configuration (from .env)
 // ══════════════════════════════════════
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 const pool = new Pool({
-  connectionString: 'postgresql://user_chocheligroup_com:ucAkwqqJ23RJmpUV3LCM@194.163.172.62:5432/site_chocheligroup_com',
-  ssl: false,
+  connectionString: process.env.DATABASE_URL || 'postgresql://user_chocheligroup_com:ucAkwqqJ23RJmpUV3LCM@194.163.172.62:5432/site_chocheligroup_com',
+  ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,
   max: 20,
   idleTimeoutMillis: 30000,
 });
 
 const s3 = new S3Client({
-  endpoint: 'https://s3.ihost.ge',
-  region: 'us-east-1',
+  endpoint: process.env.S3_ENDPOINT || 'https://s3.ihost.ge',
+  region: process.env.S3_REGION || 'us-east-1',
   credentials: {
-    accessKeyId: 'c5UmA8HhmX3DlnVh',
-    secretAccessKey: 'cYo6elo8QRLG62VsN70CQcl4iAufZDOH',
+    accessKeyId: process.env.S3_ACCESS_KEY || 'c5UmA8HhmX3DlnVh',
+    secretAccessKey: process.env.S3_SECRET_KEY || 'cYo6elo8QRLG62VsN70CQcl4iAufZDOH',
   },
   forcePathStyle: true,
 });
 
-const S3_BUCKET = 'site-chocheligroup-com';
-const S3_PUBLIC_BASE = 'https://s3.ihost.ge/site-chocheligroup-com';
+const S3_BUCKET = process.env.S3_BUCKET || 'site-chocheligroup-com';
+const S3_PUBLIC_BASE = process.env.S3_PUBLIC_URL || 'https://s3.ihost.ge/site-chocheligroup-com';
 
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
+
+// Serve static frontend build in production
+const distPath = path.join(__dirname, 'dist');
+app.use(express.static(distPath));
 
 // Helper: query wrapper
 async function query(sql, params) {
@@ -1048,11 +1057,17 @@ app.delete('/api/panel-admins/:id', async (req, res) => {
 });
 
 // ══════════════════════════════════════
+// SPA Fallback — serve index.html for all non-API routes
+// ══════════════════════════════════════
+app.get('{*path}', (req, res) => {
+  res.sendFile(path.join(distPath, 'index.html'));
+});
+
+// ══════════════════════════════════════
 // Start server
 // ══════════════════════════════════════
 app.listen(PORT, () => {
-  console.log(`\n🚀 API Server running on http://localhost:${PORT}`);
+  console.log(`\n🚀 Server running on port ${PORT}`);
   console.log(`   Health: http://localhost:${PORT}/api/health`);
-  console.log(`   DB: iHost.ge PostgreSQL (194.163.172.62)`);
-  console.log(`   S3: iHost.ge MinIO (s3.ihost.ge)\n`);
+  console.log(`   Mode: ${process.env.NODE_ENV || 'development'}\n`);
 });
